@@ -97,7 +97,56 @@ export const words: Word[] = [
   { id: "fth-form10", rootId: "fth", patternId: "form10", ar: "اِسْتَفْتَحَ", roles: "ppprrr", translit: "istaftaḥa", meaning: "he began; sought an opening" },
   { id: "khrj-form5", rootId: "khrj", patternId: "form5", ar: "تَخَرَّجَ", roles: "prrr", translit: "takharraja", meaning: "he graduated" },
   { id: "khrj-form10", rootId: "khrj", patternId: "form10", ar: "اِسْتَخْرَجَ", roles: "ppprrr", translit: "istakhraja", meaning: "he extracted" },
+
+  // Phase 3 (devpost/word-list-phase3-draft.md, learner-reviewed). Words whose letters change carry
+  // `change`: the regular form the pattern gives, and the rule. In the real word, a letter that came
+  // from the root (changed or merged) is "r"; a letter only the pattern added is "p".
+  { id: "sne-form8", rootId: "sne", patternId: "form8", ar: "اِصْطَنَعَ", roles: "prprr", translit: "iṣṭanaʿa", meaning: "he fabricated, contrived", change: { regular: "اِصْتَنَعَ", regularRoles: "prprr", rule: "ت next to ص becomes ط" } },
+
+  // و-ص-ل: almost regular; only Form VIII changes
+  { id: "wsl-form1", rootId: "wsl", patternId: "form1", ar: "وَصَلَ", roles: "rrr", translit: "waṣala", meaning: "he arrived" },
+  { id: "wsl-form2", rootId: "wsl", patternId: "form2", ar: "وَصَّلَ", roles: "rrr", translit: "waṣṣala", meaning: "he connected, delivered" },
+  { id: "wsl-form3", rootId: "wsl", patternId: "form3", ar: "وَاصَلَ", roles: "rprr", translit: "wāṣala", meaning: "he continued" },
+  { id: "wsl-form4", rootId: "wsl", patternId: "form4", ar: "أَوْصَلَ", roles: "prrr", translit: "awṣala", meaning: "he delivered, took (someone) to" },
+  { id: "wsl-faail", rootId: "wsl", patternId: "faail", ar: "وَاصِل", roles: "rprr", translit: "wāṣil", meaning: "arriving" },
+  { id: "wsl-mafool", rootId: "wsl", patternId: "mafool", ar: "مَوْصُول", roles: "prrpr", translit: "mawṣūl", meaning: "connected; relative noun" },
+  { id: "wsl-form5", rootId: "wsl", patternId: "form5", ar: "تَوَصَّلَ", roles: "prrr", translit: "tawaṣṣala", meaning: "he reached (a result)" },
+  { id: "wsl-form6", rootId: "wsl", patternId: "form6", ar: "تَوَاصَلَ", roles: "prprr", translit: "tawāṣala", meaning: "they kept in touch" },
+  { id: "wsl-form8", rootId: "wsl", patternId: "form8", ar: "اِتَّصَلَ", roles: "prrr", translit: "ittaṣala", meaning: "he got in touch, called", change: { regular: "اِوْتَصَلَ", regularRoles: "prprr", rule: "و becomes ت and merges with the pattern's ت" } },
+
+  // ق-و-ل: middle و
+  { id: "qwl-form1", rootId: "qwl", patternId: "form1", ar: "قَالَ", roles: "rrr", translit: "qāla", meaning: "he said", change: { regular: "قَوَلَ", regularRoles: "rrr", rule: "و between two vowels becomes ا" } },
+  { id: "qwl-faail", rootId: "qwl", patternId: "faail", ar: "قَائِل", roles: "rprr", translit: "qāʾil", meaning: "speaker", change: { regular: "قَاوِل", regularRoles: "rprr", rule: "و after ا becomes ء" } },
+  { id: "qwl-mafool", rootId: "qwl", patternId: "mafool", ar: "مَقُول", roles: "prrr", translit: "maqūl", meaning: "said", change: { regular: "مَقْوُول", regularRoles: "prrpr", rule: "the two و merge" } },
+  { id: "qwl-place", rootId: "qwl", patternId: "place", ar: "مَقَال", roles: "prrr", translit: "maqāl", meaning: "article, saying", shape: "مَفْعَل", change: { regular: "مَقْوَل", regularRoles: "prrr", rule: "و passes its vowel back and becomes ا" } },
+
+  // ب-ي-ع: middle ي
+  { id: "bye-form1", rootId: "bye", patternId: "form1", ar: "بَاعَ", roles: "rrr", translit: "bāʿa", meaning: "he sold", change: { regular: "بَيَعَ", regularRoles: "rrr", rule: "ي between two vowels becomes ا" } },
+  { id: "bye-form3", rootId: "bye", patternId: "form3", ar: "بَايَعَ", roles: "rprr", translit: "bāyaʿa", meaning: "he pledged allegiance to" },
+  { id: "bye-faail", rootId: "bye", patternId: "faail", ar: "بَائِع", roles: "rprr", translit: "bāʾiʿ", meaning: "seller", change: { regular: "بَايِع", regularRoles: "rprr", rule: "ي after ا becomes ء" } },
+  { id: "bye-mafool", rootId: "bye", patternId: "mafool", ar: "مَبِيع", roles: "prrr", translit: "mabīʿ", meaning: "sold; sale item", change: { regular: "مَبْيُوع", regularRoles: "prrpr", rule: "ي and و merge into ي" } },
+  { id: "bye-form8", rootId: "bye", patternId: "form8", ar: "اِبْتَاعَ", roles: "prprr", translit: "ibtāʿa", meaning: "he bought", change: { regular: "اِبْتَيَعَ", regularRoles: "prprr", rule: "ي between two vowels becomes ا" } },
+
+  // م-د-د: doubled
+  { id: "mdd-form1", rootId: "mdd", patternId: "form1", ar: "مَدَّ", roles: "rr", translit: "madda", meaning: "he extended", change: { regular: "مَدَدَ", regularRoles: "rrr", rule: "the two د merge into دّ" } },
+  { id: "mdd-form2", rootId: "mdd", patternId: "form2", ar: "مَدَّدَ", roles: "rrr", translit: "maddada", meaning: "he stretched out, extended" },
+  { id: "mdd-form4", rootId: "mdd", patternId: "form4", ar: "أَمَدَّ", roles: "prr", translit: "amadda", meaning: "he supplied, reinforced", change: { regular: "أَمْدَدَ", regularRoles: "prrr", rule: "the two د merge" } },
+  { id: "mdd-mafool", rootId: "mdd", patternId: "mafool", ar: "مَمْدُود", roles: "prrpr", translit: "mamdūd", meaning: "extended" },
+  { id: "mdd-form5", rootId: "mdd", patternId: "form5", ar: "تَمَدَّدَ", roles: "prrr", translit: "tamaddada", meaning: "it stretched out, expanded" },
+  { id: "mdd-form8", rootId: "mdd", patternId: "form8", ar: "اِمْتَدَّ", roles: "prpr", translit: "imtadda", meaning: "it extended", change: { regular: "اِمْتَدَدَ", regularRoles: "prprr", rule: "the two د merge" } },
+  { id: "mdd-form10", rootId: "mdd", patternId: "form10", ar: "اِسْتَمَدَّ", roles: "ppprr", translit: "istamadda", meaning: "he drew, derived (from)", change: { regular: "اِسْتَمْدَدَ", regularRoles: "ppprrr", rule: "the two د merge" } },
+
+  // د-ع-و: last و
+  { id: "dew-form1", rootId: "dew", patternId: "form1", ar: "دَعَا", roles: "rrr", translit: "daʿā", meaning: "he called, invited", change: { regular: "دَعَوَ", regularRoles: "rrr", rule: "a final و becomes ا" } },
+  { id: "dew-faail", rootId: "dew", patternId: "faail", ar: "دَاعِي", roles: "rprr", translit: "dāʿī", meaning: "one who calls, preacher", change: { regular: "دَاعِو", regularRoles: "rprr", rule: "a final و after kasra becomes ي" } },
+  { id: "dew-mafool", rootId: "dew", patternId: "mafool", ar: "مَدْعُوّ", roles: "prrr", translit: "madʿuww", meaning: "invited, guest", change: { regular: "مَدْعُوو", regularRoles: "prrpr", rule: "the two و merge into وّ" } },
+  { id: "dew-fiaala", rootId: "dew", patternId: "fiaala", ar: "دِعَايَة", roles: "rrprp", translit: "diʿāya", meaning: "advertising, propaganda", change: { regular: "دِعَاوَة", regularRoles: "rrprp", rule: "و after ا becomes ي" } },
+  { id: "dew-form8", rootId: "dew", patternId: "form8", ar: "اِدَّعَى", roles: "prrr", translit: "iddaʿā", meaning: "he claimed", change: { regular: "اِدْتَعَوَ", regularRoles: "prprr", rule: "ت becomes د and merges; the final و becomes ى" } },
+  { id: "dew-form10", rootId: "dew", patternId: "form10", ar: "اِسْتَدْعَى", roles: "ppprrr", translit: "istadʿā", meaning: "he summoned", change: { regular: "اِسْتَدْعَوَ", regularRoles: "ppprrr", rule: "a final و becomes ى" } },
 ];
+
+/** The form a word is assembled from: the regular form for words whose letters change, else the word itself. */
+export const assembledForm = (w: Word) => (w.change ? { ar: w.change.regular, roles: w.change.regularRoles } : { ar: w.ar, roles: w.roles });
 
 export const wordsOfRoot = (rootId: string) => words.filter((w) => w.rootId === rootId);
 
