@@ -12,7 +12,7 @@ export type Pattern = {
   phase: 1 | 2;
   template: string;
   beginner: { name: string; hint: string };
-  grammar: { name: string };
+  grammar: { name: string; term: string };
 };
 
 export type Word = {
