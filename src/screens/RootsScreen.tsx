@@ -3,18 +3,25 @@ import { roots } from "../data/roots";
 import type { Root } from "../data/types";
 import RootText from "../components/RootText";
 import RootTile from "../components/RootTile";
+import ModeSwitch from "../components/ModeSwitch";
 import CompletionMoment from "../components/moments/CompletionMoment";
-import { allSealed, collectedCount, isSealed, totalCount, UNLOCK_AT, unlockedRootIds, type Progress } from "../lib/progress";
+import { allSealed, collectedCount, isSealed, totalCount, UNLOCK_AT, unlockedRootIds, type Mode, type Progress } from "../lib/progress";
 
-type Props = { progress: Progress; onOpenRoot: (rootId: string) => void; onOpenCollection: () => void };
+type Props = {
+  progress: Progress;
+  onOpenRoot: (rootId: string) => void;
+  onOpenCollection: () => void;
+  onModeChange: (mode: Mode) => void;
+};
 
-export default function RootsScreen({ progress, onOpenRoot, onOpenCollection }: Props) {
+export default function RootsScreen({ progress, onOpenRoot, onOpenCollection, onModeChange }: Props) {
   const [note, setNote] = useState<{ prev: Root; next: Root } | null>(null);
   const open = unlockedRootIds(progress);
 
   return (
     <section className="flex flex-col gap-5">
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <ModeSwitch mode={progress.mode} onChange={onModeChange} />
         <button
           type="button"
           onClick={onOpenCollection}
