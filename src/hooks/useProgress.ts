@@ -1,5 +1,15 @@
 import { useCallback, useRef, useState } from "react";
-import { collect, isSealed, loadProgress, saveProgress, unlockedRootIds, type Progress } from "../lib/progress";
+import {
+  collect,
+  isSealed,
+  loadProgress,
+  markIntroSeen,
+  saveProgress,
+  setMode,
+  unlockedRootIds,
+  type Mode,
+  type Progress,
+} from "../lib/progress";
 import { createStore } from "../lib/storage";
 import { words } from "../data/words";
 
@@ -15,6 +25,7 @@ export function useProgress() {
   const latest = useRef(progress);
 
   const update = useCallback((next: Progress) => {
+    if (next === latest.current) return;
     latest.current = next;
     saveProgress(store, next);
     setProgress(next);
@@ -37,5 +48,8 @@ export function useProgress() {
     [update],
   );
 
-  return { progress, collectWord };
+  const changeMode = useCallback((mode: Mode) => update(setMode(latest.current, mode)), [update]);
+  const finishIntro = useCallback(() => update(markIntroSeen(latest.current)), [update]);
+
+  return { progress, collectWord, changeMode, finishIntro };
 }
