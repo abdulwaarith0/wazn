@@ -9,7 +9,11 @@ import WordAssembly, { type AssemblyHandle } from "../components/WordAssembly";
 import RewardBurst from "../components/moments/RewardBurst";
 import type { Mode } from "../lib/progress";
 
-const PHASE = 1;
+const PHASE = 2;
+const GROUPS = [
+  { kind: "verb", title: "Verbs" },
+  { kind: "noun", title: "Nouns" },
+] as const;
 
 type Props = {
   root: Root;
@@ -103,26 +107,40 @@ export default function Workshop({ root, mode, collected, onCollect, onBack }: P
         )}
       </p>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {patterns
-          .filter((p) => p.phase <= PHASE)
-          .map((p) => {
-            const word = wordFor(root.id, p.id);
-            return (
-              <PatternTile
-                key={p.id}
-                pattern={p}
-                word={word}
-                mode={mode}
-                available={!!word}
-                collected={!!word && collected.includes(word.id)}
-                active={active === p.id}
-                onPick={() => void pick(p)}
-                onBlocked={() => setNote("doesn't use this pattern in common Arabic.")}
-              />
-            );
-          })}
-      </div>
+      {GROUPS.map(({ kind, title }) => (
+        <div key={kind} className="flex flex-col gap-2">
+          <h2 className="text-xs font-semibold tracking-[0.2em] text-muted uppercase">{title}</h2>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {patterns
+              .filter((p) => p.phase <= PHASE && p.kind === kind)
+              .map((p) => {
+                const word = wordFor(root.id, p.id);
+                return (
+                  <PatternTile
+                    key={p.id}
+                    pattern={p}
+                    word={word}
+                    mode={mode}
+                    available={!!word}
+                    collected={!!word && collected.includes(word.id)}
+                    active={active === p.id}
+                    onPick={() => void pick(p)}
+                    onBlocked={() => setNote("doesn't use this pattern in common Arabic.")}
+                  />
+                );
+              })}
+          </div>
+          {kind === "verb" && mode === "grammar" && (
+            <p className="text-xs text-muted">
+              Form IX{" "}
+              <bdi lang="ar" dir="rtl" className="font-arabic text-sm">
+                اِفْعَلَّ
+              </bdi>{" "}
+              isn't shown: it's used for colours and physical defects, so none of these roots take it.
+            </p>
+          )}
+        </div>
+      ))}
     </section>
   );
 }
