@@ -1,10 +1,12 @@
 import { useCallback, useRef, useState } from "react";
-import { collect, loadProgress, saveProgress, unlockedRootIds, type Progress } from "../lib/progress";
+import { collect, isSealed, loadProgress, saveProgress, unlockedRootIds, type Progress } from "../lib/progress";
 import { createStore } from "../lib/storage";
+import { words } from "../data/words";
 
 const store = createStore();
 
-export type CollectResult = { added: boolean; unlocked?: string };
+/** What collecting a word just caused: a newly unlocked root, a newly sealed root. */
+export type CollectResult = { added: boolean; unlocked?: string; sealed?: string };
 
 /** React access to progress. Every change is saved immediately. */
 export function useProgress() {
@@ -25,7 +27,12 @@ export function useProgress() {
       if (after === before) return { added: false };
       update(after);
       const wasOpen = unlockedRootIds(before);
-      return { added: true, unlocked: unlockedRootIds(after).find((id) => !wasOpen.includes(id)) };
+      const rootId = words.find((w) => w.id === wordId)?.rootId;
+      return {
+        added: true,
+        unlocked: unlockedRootIds(after).find((id) => !wasOpen.includes(id)),
+        sealed: rootId && isSealed(after, rootId) ? rootId : undefined,
+      };
     },
     [update],
   );
