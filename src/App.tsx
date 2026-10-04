@@ -6,10 +6,11 @@ import UnlockMoment from "./components/moments/UnlockMoment";
 import { useProgress } from "./hooks/useProgress";
 import CollectionScreen from "./screens/CollectionScreen";
 import Intro from "./screens/Intro";
+import QuizScreen from "./screens/QuizScreen";
 import RootsScreen from "./screens/RootsScreen";
 import Workshop from "./screens/Workshop";
 
-type Screen = { name: "intro" } | { name: "roots" } | { name: "collection" } | { name: "workshop"; rootId: string };
+type Screen = { name: "intro" } | { name: "roots" } | { name: "collection" } | { name: "quiz" } | { name: "workshop"; rootId: string };
 type Moment = { kind: "seal" | "unlock"; rootId: string };
 
 export default function App() {
@@ -76,6 +77,8 @@ export default function App() {
             onCollect={collect}
             onBack={() => go({ name: "roots" })}
           />
+        ) : screen.name === "quiz" ? (
+          <QuizScreen progress={progress} onBack={() => go({ name: "roots" })} />
         ) : screen.name === "collection" ? (
           <CollectionScreen progress={progress} onBack={() => go({ name: "roots" })} />
         ) : (
@@ -83,6 +86,7 @@ export default function App() {
             progress={progress}
             onOpenRoot={(rootId) => go({ name: "workshop", rootId })}
             onOpenCollection={() => go({ name: "collection" })}
+            onOpenQuiz={() => go({ name: "quiz" })}
             onModeChange={changeMode}
           />
         )}
