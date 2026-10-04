@@ -100,6 +100,7 @@ Source of the sound: ready-made audio first, the learner's own recordings for an
 
 ### Weak and Doubled Roots (Phase 3)
 - [ ] Roots containing و, ي or a doubled letter are added; the animation shows letters changing or merging as they enter the pattern (e.g. ق-و-ل + فَعَلَ → قالَ).
+- [ ] **Two steps (learner's choice during the build):** the root first pours in to form the regular form (قَوَلَ); its changing letters glow and it turns into the real word (قالَ), with a one-line rule beneath ("و between two vowels becomes ا"). Changed and merged letters stay ink. Words: `devpost/word-list-phase3-draft.md` (learner-reviewed).
 
 ## States and Boundaries
 - **First use:** Roots screen, Beginner mode, only ك-ت-ب unlocked, empty collection.
