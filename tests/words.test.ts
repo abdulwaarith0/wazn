@@ -18,8 +18,12 @@ describe("word data", () => {
   it.each(cases)("%s: fits its pattern", (_, w) => {
     const pattern = patterns.find((p) => p.id === w.patternId);
     expect(pattern).toBeDefined();
-    // Place nouns vary (مَفْعَل / مَفْعِل / مَفْعَلة), so they carry their exact shape.
+    // Some patterns vary (place nouns مَفْعَل / مَفْعِل / مَفْعَلة; Form I فَعَلَ / فَعِلَ), so those words carry their exact shape.
     expect(placeholder(w.ar, w.roles)).toBe(w.shape ?? pattern?.template);
+  });
+
+  it.each(roots.map((r) => [r.id] as const))("%s has at least 3 words, so it can unlock the next root", (id) => {
+    expect(words.filter((w) => w.rootId === id).length).toBeGreaterThanOrEqual(3);
   });
 
   it("has no duplicate root + pattern pairs or ids", () => {
