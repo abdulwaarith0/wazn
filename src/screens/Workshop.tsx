@@ -4,6 +4,7 @@ import { patterns } from "../data/patterns";
 import { wordFor, wordsOfRoot } from "../data/words";
 import Ornament from "../components/Ornament";
 import PatternTile from "../components/PatternTile";
+import RootText from "../components/RootText";
 import WordAssembly, { type AssemblyHandle } from "../components/WordAssembly";
 import RewardBurst from "../components/moments/RewardBurst";
 
@@ -95,10 +96,7 @@ export default function Workshop({ root, collected, onCollect, onBack }: Props) 
       <p aria-live="polite" className="min-h-6 text-center text-sm text-muted">
         {note && (
           <>
-            <span lang="ar" dir="rtl" className="font-arabic text-base text-ink">
-              {rootText}
-            </span>{" "}
-            {note}
+            <RootText root={root} /> {note}
           </>
         )}
       </p>
