@@ -1,4 +1,5 @@
 import type { Pattern, Word } from "../data/types";
+import ChangeRule from "./ChangeRule";
 import ColouredWord from "./ColouredWord";
 import { patternLabel, patternShape } from "../lib/labels";
 import type { Mode } from "../lib/progress";
@@ -13,6 +14,11 @@ export default function WordCard({ word, pattern, mode }: { word: Word; pattern:
       <span className="text-sm">
         <span className="text-muted italic">{word.translit}</span> · {word.meaning}
       </span>
+      {word.change && (
+        <span className="text-xs text-gold italic">
+          <ChangeRule rule={word.change.rule} />
+        </span>
+      )}
       <span className="mt-1 flex items-center gap-1.5 text-xs text-muted">
         <span lang="ar" dir="rtl" className="font-arabic text-sm text-gold">
           {patternShape(pattern, mode, word)}
