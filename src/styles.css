@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #f6efe1;
+  --color-card: #fbf7ee;
+  --color-ink: #2a2118;
+  --color-muted: #6d5f4e;
+  --color-line: #dccfb6;
+  --color-gold: #a8792a;
+  --color-gold-soft: #d9b877;
+
+  --font-sans: "Inter Variable", system-ui, sans-serif;
+  --font-arabic: "Amiri", serif;
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    min-height: 100dvh;
+    font-family: var(--font-sans);
+  }
+  button {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+}
+
+/* The forming word: big enough to watch, small enough for long Form X words on a phone. */
+.word-stage {
+  font-family: var(--font-arabic);
+  font-size: clamp(56px, 15vw, 84px);
+  line-height: 150px;
+  height: 150px;
+}
