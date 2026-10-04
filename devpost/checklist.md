@@ -41,7 +41,7 @@ Commits (learner's standing rule, `spec.md > Decisions and Open Issues`): one fi
   Learner check: Collect every word of ك-ت-ب, watch the seal stamp, then open the Collection and browse your cards.
   Commit: `Add the Collection and gold seals`
 
-- [ ] **4. Beginner/Grammar switch and the logo intro (Phase 1 complete)**
+- [x] **4. Beginner/Grammar switch and the logo intro (Phase 1 complete)**
   Becomes usable: A one-tap Beginner/Grammar switch on the Roots screen that changes only labels (e.g. "faa'il · the doer" ↔ "اسم الفاعل · فاعِل", "Form III", the exact place-noun shape). On first open, و-ز-ن flies into فَعْل to form وَزْن, a tap skips it, the logo replays it. Phase 1 is complete and submittable.
   Why now: Both reuse finished pieces (labels on tiles and cards; the intro is `WordAssembly` with a different word), so they come after the loop works. Ends Phase 1, the must-ship line.
   PRD ref: `prd.md > Intro`, `prd.md > Beginner / Grammar Switch`, `prd.md > The Core Journey` (step 1)
@@ -94,7 +94,7 @@ Commits (learner's standing rule, `spec.md > Decisions and Open Issues`): one fi
 ## Hands-on Checkpoints
 
 - [x] Early usable behavior explored — after slice 1: the assembly animation's feel, timing and joining (including Safari/iPhone), while it can still shape everything built around it. Done on Android Chrome: animation "feels good"; learner asked for a logo (added). Safari/iPhone joining check not done yet (tested on Android); still open per `spec.md > Decisions and Open Issues`.
-- [ ] Phase 1 core journey explored — after slice 4: the full must-ship journey (intro → unlock → collect → seal → Collection, both modes), the submittable checkpoint before Phases 2-3
+- [x] Phase 1 core journey explored — after slice 4: the full must-ship journey (intro → unlock → collect → seal → Collection, both modes), the submittable checkpoint before Phases 2-3. Learner tried it and reported "works well"; no changes requested.
 - [ ] Final kick-the-tires exploration and feedback completed
 
 ## Final Review
