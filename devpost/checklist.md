@@ -71,7 +71,7 @@ Commits (learner's standing rule, `spec.md > Decisions and Open Issues`): one fi
   Learner check: With a few words collected, play ten quiz questions; try a wrong answer and a drag you drop in the wrong slot.
   Commit: `Add the quiz`
 
-- [ ] **7. Weak and doubled roots, where letters change as they enter**
+- [x] **7. Weak and doubled roots, where letters change as they enter**
   Becomes usable: New roots containing و, ي or a doubled letter (and the irregular Form VIII cells such as اِصْطَنَعَ), whose letters visibly change or merge on the way into the pattern (e.g. ق-و-ل + فَعَلَ → قالَ).
   Why now: It extends the kernel animation and the data model, so it comes after everything it builds on is stable; Phase 3, with the app already submittable.
   PRD ref: `prd.md > Weak and Doubled Roots (Phase 3)`
@@ -115,3 +115,4 @@ Activity mode: [live app and editor, explicit static fallback, focused alternati
 
 ## Revisions
 - Added the logo in slice 1: wordmark (header, intro's final frame) and wax-seal app icons (`public/*.png`, `manifest.webmanifest`, source `devpost/research/seal-icon.html`) — the learner asked for a logo at the first checkpoint and chose samples 1 + 2 from `devpost/research/logo-samples.html`; recorded in `prd.md > Look and Feel`.
+- Weak and doubled roots animate in two steps (regular form, then the change with its rule) and words carry a `change` field — the learner chose this after seeing the options; recorded in `prd.md > Weak and Doubled Roots (Phase 3)` and `spec.md > Data Model`. The quiz builds these words in their regular form and accepts either letter of a doubled root in either slot.
