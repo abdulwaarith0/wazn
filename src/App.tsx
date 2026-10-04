@@ -5,15 +5,17 @@ import SealMoment from "./components/moments/SealMoment";
 import UnlockMoment from "./components/moments/UnlockMoment";
 import { useProgress } from "./hooks/useProgress";
 import CollectionScreen from "./screens/CollectionScreen";
+import Intro from "./screens/Intro";
 import RootsScreen from "./screens/RootsScreen";
 import Workshop from "./screens/Workshop";
 
-type Screen = { name: "roots" } | { name: "collection" } | { name: "workshop"; rootId: string };
+type Screen = { name: "intro" } | { name: "roots" } | { name: "collection" } | { name: "workshop"; rootId: string };
 type Moment = { kind: "seal" | "unlock"; rootId: string };
 
 export default function App() {
-  const { progress, collectWord } = useProgress();
-  const [screen, setScreen] = useState<Screen>({ name: "roots" });
+  const { progress, collectWord, changeMode, finishIntro } = useProgress();
+  // The intro plays on the very first open only; the logo replays it.
+  const [screen, setScreen] = useState<Screen>(() => (progress.introSeen ? { name: "roots" } : { name: "intro" }));
   // Moments waiting to be shown, one at a time: a seal first, then an unlock.
   const [moments, setMoments] = useState<Moment[]>([]);
 
@@ -39,19 +41,37 @@ export default function App() {
   const momentRoot = moment && rootById(moment.rootId);
   const root = screen.name === "workshop" ? rootById(screen.rootId) : undefined;
 
+  if (screen.name === "intro") {
+    return (
+      <Intro
+        onDone={() => {
+          finishIntro();
+          go({ name: "roots" });
+        }}
+      />
+    );
+  }
+
   return (
     <div className="mx-auto flex min-h-dvh max-w-3xl flex-col px-4 pb-16">
       <header className="flex items-center justify-between py-4">
-        <div className="flex items-center gap-2.5">
+        <button
+          type="button"
+          onClick={() => go({ name: "intro" })}
+          aria-label="Wazn: replay the intro"
+          title="Replay the intro"
+          className="flex items-center gap-2.5 rounded-lg"
+        >
           <Logo />
           <span className="text-sm font-semibold tracking-[0.2em] text-muted uppercase">Wazn</span>
-        </div>
+        </button>
       </header>
       <main className="flex-1">
         {root ? (
           <Workshop
             key={root.id}
             root={root}
+            mode={progress.mode}
             collected={progress.collected}
             onCollect={collect}
             onBack={() => go({ name: "roots" })}
@@ -63,6 +83,7 @@ export default function App() {
             progress={progress}
             onOpenRoot={(rootId) => go({ name: "workshop", rootId })}
             onOpenCollection={() => go({ name: "collection" })}
+            onModeChange={changeMode}
           />
         )}
       </main>
