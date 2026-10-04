@@ -31,7 +31,7 @@ Commits (learner's standing rule, `spec.md > Decisions and Open Issues`): one fi
   Learner check: Open the app, collect three words from ك-ت-ب and watch د-ر-س unlock; tap a still-locked root; then close the tab, reopen it and check your words and unlocks are still there.
   Commit: `Add roots, collecting, unlocking and saved progress`
 
-- [ ] **3. Your Collection and gold seals**
+- [x] **3. Your Collection and gold seals**
   Becomes usable: A Collection screen of word cards grouped by root (word colour-coded, meaning, source pattern), with an empty-state invitation. Collecting every real word of a root stamps a gold wax seal, shown on its tile and its Collection group; sealing all ten gives a completion moment.
   Why now: Needs the collection from slice 2; it's the reward that makes collecting worth doing.
   PRD ref: `prd.md > The Core Journey` (steps 7-8), `prd.md > Collection`, `prd.md > Collecting, Unlocking and Seals`, `prd.md > States and Boundaries`
