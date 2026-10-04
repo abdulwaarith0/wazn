@@ -1,10 +1,14 @@
 import { useRef } from "react";
 import { animate, useReducedMotion } from "motion/react";
-import type { Pattern } from "../data/types";
+import type { Pattern, Word } from "../data/types";
 import { base, letters, PLACEHOLDERS } from "../lib/arabic";
+import { patternLabel, patternShape } from "../lib/labels";
+import type { Mode } from "../lib/progress";
 
 type Props = {
   pattern: Pattern;
+  word: Word | undefined;
+  mode: Mode;
   available: boolean;
   collected: boolean;
   active: boolean;
@@ -14,9 +18,10 @@ type Props = {
 
 const isPlaceholder = (l: string) => (PLACEHOLDERS as readonly string[]).includes(base(l));
 
-export default function PatternTile({ pattern, available, collected, active, onPick, onBlocked }: Props) {
+export default function PatternTile({ pattern, word, mode, available, collected, active, onPick, onBlocked }: Props) {
   const ref = useRef<HTMLButtonElement>(null);
   const reduced = useReducedMotion();
+  const label = patternLabel(pattern, mode);
 
   const tap = () => {
     if (available) return onPick();
@@ -48,14 +53,20 @@ export default function PatternTile({ pattern, available, collected, active, onP
         </svg>
       )}
       <span lang="ar" dir="rtl" className="font-arabic text-[30px] leading-[1.6]">
-        {letters(pattern.template).map((l, i) => (
+        {letters(patternShape(pattern, mode, word)).map((l, i) => (
           <span key={i} className={isPlaceholder(l) ? "text-ink" : "text-gold"}>
             {l}
           </span>
         ))}
       </span>
-      <span className="text-[13px] leading-tight font-semibold">{pattern.beginner.name}</span>
-      <span className="text-xs leading-tight text-muted">{pattern.beginner.hint}</span>
+      {label.nameIsArabic ? (
+        <span lang="ar" dir="rtl" className="font-arabic text-[15px] leading-tight font-bold">
+          {label.name}
+        </span>
+      ) : (
+        <span className="text-[13px] leading-tight font-semibold">{label.name}</span>
+      )}
+      <span className="text-xs leading-tight text-muted">{label.hint}</span>
     </button>
   );
 }
