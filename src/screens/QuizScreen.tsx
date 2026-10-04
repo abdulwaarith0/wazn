@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { animate, motion, useReducedMotion, type PanInfo } from "motion/react";
 import { patternById } from "../data/patterns";
+import { assembledForm } from "../data/words";
 import Ornament from "../components/Ornament";
 import WordAssembly, { type AssemblyHandle } from "../components/WordAssembly";
 import { pieces, withJoiners } from "../lib/arabic";
@@ -220,8 +221,9 @@ function BuildWord({ question, mode, locked, onAnswer }: { question: Question; m
     setPlacements(next);
     if (next.every((v) => v !== null)) {
       answered.current = true;
-      const correct = next.every((v, s) => v === s);
-      if (!correct) slots.current.forEach((el, s) => next[s] !== s && animate(el, { x: [0, -6, 6, -4, 4, 0] }, { duration: 0.4 }));
+      // Compare letters, not tiles: in a doubled root (م-د-د) either د fits either slot.
+      const correct = next.every((v, s) => v !== null && root.letters[v] === root.letters[s]);
+      if (!correct) slots.current.forEach((el, s) => root.letters[next[s]!] !== root.letters[s] && animate(el, { x: [0, -6, 6, -4, 4, 0] }, { duration: 0.4 }));
       setTimeout(() => onAnswer(correct, tiles.current), correct ? 250 : 650);
     }
   };
@@ -273,7 +275,8 @@ function BuildWord({ question, mode, locked, onAnswer }: { question: Question; m
       </div>
 
       <div dir="rtl" className="flex items-center justify-center gap-1">
-        {pieces(word.ar, word.roles).map((p, i) =>
+        {/* Weak and doubled words are built in their regular form; the answer then shows the change. */}
+        {pieces(assembledForm(word).ar, assembledForm(word).roles).map((p, i) =>
           p.rootIndex < 0 ? (
             <span key={i} lang="ar" className="font-arabic text-[44px] leading-none text-gold">
               {withJoiners(p.letter, p.joins)}
