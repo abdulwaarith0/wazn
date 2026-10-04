@@ -21,7 +21,7 @@ Commits (learner's standing rule, `spec.md > Decisions and Open Issues`): one fi
   Learner check: Run `npm run dev`, open http://localhost:5173, tap each pattern on ك-ت-ب and watch the letters fly in; tap a greyed-out one. Then open it on your iPhone/Safari (`npm run dev -- --host`, use the Network URL) and check the colour-coded word is still joined.
   Commit: `Scaffold Wazn and form the first word`
 
-- [ ] **2. Ten roots to unlock, words collected, progress saved**
+- [x] **2. Ten roots to unlock, words collected, progress saved**
   Becomes usable: The app opens on the Roots screen with all ten roots (only ك-ت-ب open). Forming a new word collects it with a gold burst; the third word from a root unlocks the next with an unlock moment; locked tiles explain how to unlock; each tile shows "collected / total". Close and reopen the browser: everything is still there.
   Why now: Collecting and unlocking turns the kernel into the game loop, and saved progress is where the data model can be wrong, so it gets tested while it's small.
   PRD ref: `prd.md > The Core Journey` (steps 2, 5-6, 10), `prd.md > Roots Screen`, `prd.md > Collecting, Unlocking and Seals`, `prd.md > Saved Progress`, `prd.md > States and Boundaries`
