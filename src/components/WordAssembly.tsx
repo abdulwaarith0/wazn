@@ -3,6 +3,7 @@ import { flushSync } from "react-dom";
 import { animate, useReducedMotion } from "motion/react";
 import type { Word } from "../data/types";
 import { pieces, withJoiners, type Piece } from "../lib/arabic";
+import ColouredWord from "./ColouredWord";
 
 // The kernel animation (proven in devpost/research/animation-spike.html):
 // 1. the pattern waits with faint gold ف ع ل placeholders, drawn as separate pieces with
@@ -191,11 +192,7 @@ export default function WordAssembly({ ref }: { ref?: Ref<AssemblyHandle> }) {
               ))}
             </div>
             <div ref={realRef} style={{ opacity: 0 }} className="absolute inset-0 text-center whitespace-nowrap">
-              {ps.map((p, i) => (
-                <span key={i} className={p.rootIndex >= 0 ? "text-ink" : "text-gold"}>
-                  {p.letter}
-                </span>
-              ))}
+              <ColouredWord word={shown.word} />
             </div>
           </div>
         ) : (
