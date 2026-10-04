@@ -4,7 +4,7 @@ import { wordFor } from "../src/data/words";
 import { patternLabel, patternShape } from "../src/lib/labels";
 import { collect, freshProgress, markIntroSeen, setMode } from "../src/lib/progress";
 
-const cases = patterns.filter((p) => p.phase === 1).map((p) => [p.id, p] as const);
+const cases = patterns.map((p) => [p.id, p] as const);
 
 describe("labels", () => {
   it.each(cases)("%s has a label in both modes", (_, p) => {
@@ -37,5 +37,21 @@ describe("switching mode", () => {
     const switched = setMode(setMode(p, "grammar"), "beginner");
     expect(setMode(p, "grammar")).toEqual({ ...p, mode: "grammar" });
     expect(switched).toEqual(p);
+  });
+});
+
+describe("Forms V-X", () => {
+  it("labels them by form number in Grammar mode", () => {
+    expect(patterns.filter((p) => p.phase === 2).map((p) => patternLabel(p, "grammar").name)).toEqual([
+      "Form V",
+      "Form VI",
+      "Form VII",
+      "Form VIII",
+      "Form X",
+    ]);
+  });
+
+  it("leaves Form IX out", () => {
+    expect(patterns.some((p) => p.form === 9)).toBe(false);
   });
 });
