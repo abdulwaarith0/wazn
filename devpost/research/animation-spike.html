@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wazn Animation Spike</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root { --paper:#f6efe1; --card:#fbf7ee; --ink:#2a2118; --muted:#6d5f4e; --line:#dccfb6; --gold:#a8792a; --goldsoft:#d9b877; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --paper:#1c1813; --card:#241f19; --ink:#efe6d6; --muted:#b3a48d; --line:#3b3227; --gold:#d6a650; --goldsoft:#8a6a33; } }
+  :root[data-theme="dark"] { --paper:#1c1813; --card:#241f19; --ink:#efe6d6; --muted:#b3a48d; --line:#3b3227; --gold:#d6a650; --goldsoft:#8a6a33; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font:15px/1.5 Inter, system-ui, sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 24px; margin: 0 0 4px; }
+  .lead { color: var(--muted); margin-top: 0; }
+  .ar { font-family: Amiri, serif; }
+  .picker { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin: 18px 0; }
+  button { font: inherit; font-size: 14px; border:1px solid var(--line); background:var(--card); color:var(--ink); padding:6px 12px; border-radius:8px; cursor:pointer; }
+  button[aria-pressed="true"] { background:var(--ink); color:var(--paper); border-color: var(--ink); }
+  button .ar { font-size: 18px; }
+  .stage { background:var(--card); border:1px solid var(--line); border-radius:16px; padding: 28px 16px 20px; position: relative; overflow: hidden; }
+  .rootrow { display:flex; gap:16px; justify-content:center; direction: rtl; }
+  .tile { font-family: Amiri, serif; font-size: 44px; width: 68px; height: 68px; display:grid; place-items:center;
+          background: var(--ink); color: var(--paper); border-radius: 12px; transition: opacity .3s, transform .3s; }
+  .target { position: relative; height: 150px; margin-top: 26px; }
+  .w { font-family: Amiri, serif; font-size: 84px; direction: rtl; text-align: center; line-height: 150px; position: absolute; inset: 0; white-space: nowrap; }
+  .w .l { display: inline-block; }
+  .slots .ph { color: var(--goldsoft); }
+  .slots .pat, .real .pat { color: var(--gold); }
+  .real { opacity: 0; }
+  .meaning { text-align:center; color: var(--muted); min-height: 24px; transform: translateY(6px); opacity: 0; }
+  .flyer { position: fixed; pointer-events: none; z-index: 10; font-family: Amiri, serif; color: var(--ink); text-align: center; }
+  .flyer span { position: absolute; inset: 0; }
+  .ripple { position: fixed; pointer-events: none; border: 2px solid var(--gold); border-radius: 50%; z-index: 9; }
+  .ghost { position: fixed; pointer-events: none; z-index: 8; font-family: Amiri, serif; color: var(--goldsoft); text-align: center; }
+  .legend { display:flex; gap: 18px; justify-content:center; font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .legend b.i { color: var(--ink); } .legend b.g { color: var(--gold); }
+  .ctl { display:flex; gap:8px; justify-content:center; margin-top: 14px; flex-wrap: wrap; }
+  .changes { margin-top: 26px; }
+  .changes li { margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Animation spike v2</h1>
+  <p class="lead">Amiri, colour-coded: <b>ink</b> letters come from the root, <b style="color:var(--gold)">gold</b> letters come from the pattern. Pick a word and press Play.</p>
+  <div class="picker" id="picker"></div>
+  <div class="stage">
+    <div class="rootrow" id="root"></div>
+    <div class="target">
+      <div class="w slots" id="slots"></div>
+      <div class="w real" id="real"></div>
+    </div>
+    <div class="meaning" id="meaning"></div>
+    <div class="legend"><span><b class="i">■</b> from the root</span><span><b class="g">■</b> from the pattern</span></div>
+    <div class="ctl"><button id="play">▶ Play</button><button id="slow">Slow motion</button><button id="rm" aria-pressed="false">Reduced motion</button></div>
+  </div>
+  <ol class="changes">
+    <li><strong>The pattern waits in faint gold:</strong> its ف ع ل placeholders show where the root letters will go.</li>
+    <li><strong>Root tiles lift off</strong> and fly along an arc, one after another.</li>
+    <li><strong>On landing the placeholder is knocked out</strong> (it floats up and fades), the letter squashes slightly like it has weight, and a gold ink ripple marks the spot.</li>
+    <li><strong>The letter morphs into its joined shape</strong> as it lands (a cross-fade, not a jump).</li>
+    <li><strong>The finished word settles</strong> as real text, colour-coded root vs pattern, and the meaning rises in.</li>
+    <li><strong>Reduced motion</strong> (for people who turn off animations on their device) gets a calm fade instead.</li>
+  </ol>
+</main>
+<script>
+  const ZWJ = "‍";
+  const NON_CONNECT = new Set([..."اأإآدذرزوؤةء"]);
+  const isMark = ch => /[ً-ْٰ]/.test(ch);
+  const PH = ["ف", "ع", "ل"];
+
+  // role string: one char per letter cluster, r = root letter, p = pattern letter
+  const words = [
+    { word: "وَزْن", root: "وزن", roles: "rrr", label: "وَزْن · intro", meaning: "wazn · weight, pattern" },
+    { word: "كَاتِب", root: "كتب", roles: "rprr", label: "كاتِب", meaning: "kātib · writer" },
+    { word: "مَكْتُوب", root: "كتب", roles: "prrpr", label: "مَكْتُوب", meaning: "maktūb · written; a letter" },
+    { word: "مَكْتَب", root: "كتب", roles: "prrr", label: "مَكْتَب", meaning: "maktab · office, desk" },
+    { word: "كِتَابَة", root: "كتب", roles: "rrprp", label: "كِتابة", meaning: "kitāba · writing" },
+    { word: "كَتَّبَ", root: "كتب", roles: "rrr", label: "كَتَّبَ", meaning: "kattaba · made (someone) write" },
+    { word: "مَسْجِد", root: "سجد", roles: "prrr", label: "مَسْجِد", meaning: "masjid · mosque" },
+  ];
+
+  function clusters(s) {
+    const out = [];
+    for (const ch of s) { if (isMark(ch) && out.length) out[out.length - 1] += ch; else out.push(ch); }
+    return out;
+  }
+  function joinFlags(cl) {
+    return cl.map((c, i) => {
+      const prev = cl[i - 1], next = cl[i + 1];
+      return { prev: !!prev && !NON_CONNECT.has(prev[0]), next: !!next && !NON_CONNECT.has(c[0]) };
+    });
+  }
+  const shape = (c, f) => (f.prev ? ZWJ : "") + c + (f.next ? ZWJ : "");
+
+  let cur = words[1], speed = 1, reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const $ = id => document.getElementById(id);
+  $("rm").setAttribute("aria-pressed", String(reduced));
+
+  function model(w) {
+    const cl = clusters(w.word), flags = joinFlags(cl);
+    let r = 0;
+    const items = cl.map((c, i) => {
+      const role = w.roles[i];
+      const ri = role === "r" ? r++ : -1;
+      const placeholder = ri >= 0 ? PH[ri] + c.slice(1) : c;
+      return { c, ri, placeholder, f: flags[i] };
+    });
+    return items;
+  }
+
+  function reset() {
+    const items = model(cur);
+    $("root").innerHTML = [...cur.root].map(l => `<div class="tile">${l}</div>`).join("");
+    $("slots").innerHTML = items.map(it => `<span class="l ${it.ri >= 0 ? "ph" : "pat"}">${shape(it.placeholder, it.f)}</span>`).join("");
+    $("real").innerHTML = items.map(it => `<span class="${it.ri >= 0 ? "" : "pat"}">${it.c}</span>`).join("");
+    $("slots").style.opacity = 1; $("real").style.opacity = 0;
+    $("real").getAnimations().forEach(a => a.cancel()); $("slots").getAnimations().forEach(a => a.cancel());
+    $("meaning").getAnimations().forEach(a => a.cancel());
+    $("meaning").textContent = cur.meaning; $("meaning").style.opacity = 0;
+  }
+
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  async function play() {
+    reset();
+    await new Promise(r => requestAnimationFrame(r));
+    const items = model(cur);
+    const tiles = [...document.querySelectorAll("#root .tile")];
+    const slotEls = [...$("slots").children];
+    const fontSize = parseFloat(getComputedStyle($("slots")).fontSize);
+
+    if (reduced) {
+      tiles.forEach(t => t.style.opacity = .25);
+      await finish(400);
+      return;
+    }
+
+    const jobs = items.map((it, i) => ({ it, el: slotEls[i] })).filter(j => j.it.ri >= 0).map(({ it, el }) => {
+      const tile = tiles[it.ri];
+      const from = tile.getBoundingClientRect(), to = el.getBoundingClientRect();
+      const flyer = document.createElement("div");
+      flyer.className = "flyer";
+      Object.assign(flyer.style, { left: to.left + "px", top: to.top + "px", width: to.width + "px", height: to.height + "px",
+        fontSize: fontSize + "px", lineHeight: to.height + "px" });
+      const iso = document.createElement("span"); iso.textContent = cur.root[it.ri];
+      const joined = document.createElement("span"); joined.textContent = shape(it.c, it.f); joined.style.opacity = 0;
+      flyer.append(iso, joined);
+      document.body.appendChild(flyer);
+
+      const dx = from.left + from.width / 2 - (to.left + to.width / 2);
+      const dy = from.top + from.height / 2 - (to.top + to.height / 2);
+      const s0 = 44 / fontSize;
+      const delay = it.ri * 180 * speed, dur = 760 * speed;
+
+      tile.animate([{ transform: "scale(1)" }, { transform: "scale(1.12) translateY(-4px)" }, { transform: "scale(1)", opacity: .2 }],
+        { duration: 260 * speed, delay, fill: "forwards", easing: "ease-out" });
+      flyer.animate([
+        { transform: `translate(${dx}px, ${dy}px) scale(${s0}) rotate(0deg)`, offset: 0 },
+        { transform: `translate(${dx * .45}px, ${dy * .45 - 46}px) scale(${s0 * 1.35}) rotate(${it.ri % 2 ? 6 : -6}deg)`, offset: .5 },
+        { transform: "translate(0, 0) scale(1.06, .9) rotate(0deg)", offset: .86 },
+        { transform: "translate(0, -4px) scale(.98, 1.04)", offset: .94 },
+        { transform: "translate(0, 0) scale(1)", offset: 1 }
+      ], { duration: dur, delay, easing: "cubic-bezier(.3,.7,.2,1)", fill: "both" });
+      // glyph morph: isolated -> joined, timed to the landing
+      iso.animate([{ opacity: 1 }, { opacity: 1, offset: .72 }, { opacity: 0 }], { duration: dur, delay, fill: "both" });
+      joined.animate([{ opacity: 0 }, { opacity: 0, offset: .72 }, { opacity: 1 }], { duration: dur, delay, fill: "both" });
+
+      return sleep(delay + dur * .58).then(() => {
+        // placeholder is knocked out of its slot
+        const ghost = document.createElement("div");
+        ghost.className = "ghost";
+        Object.assign(ghost.style, { left: to.left + "px", top: to.top + "px", width: to.width + "px", height: to.height + "px",
+          fontSize: fontSize + "px", lineHeight: to.height + "px" });
+        ghost.textContent = el.textContent;
+        document.body.appendChild(ghost);
+        el.style.visibility = "hidden";
+        // the incoming letter comes from above, so the placeholder is pushed down and out
+        ghost.animate([{ transform: "translateY(0) scale(1)", opacity: .9 }, { transform: "translateY(36px) scale(.7) rotate(-10deg)", opacity: 0 }],
+          { duration: 420 * speed, easing: "ease-in", fill: "forwards" }).finished.then(() => ghost.remove());
+      }).then(() => sleep(dur * .28)).then(() => {
+        // ink ripple on landing
+        const rp = document.createElement("div");
+        rp.className = "ripple";
+        const cx = to.left + to.width / 2, cy = to.top + to.height * .62;
+        Object.assign(rp.style, { left: cx - 10 + "px", top: cy - 10 + "px", width: "20px", height: "20px" });
+        document.body.appendChild(rp);
+        rp.animate([{ transform: "scale(.4)", opacity: .9 }, { transform: "scale(4)", opacity: 0 }],
+          { duration: 520 * speed, easing: "ease-out", fill: "forwards" }).finished.then(() => rp.remove());
+      }).then(() => sleep(dur * .14)).then(() => {
+        el.textContent = shape(it.c, it.f); el.classList.remove("ph"); el.style.visibility = "visible";
+        flyer.remove();
+      });
+    });
+    await Promise.all(jobs);
+    await finish(380 * speed);
+  }
+
+  async function finish(d) {
+    $("slots").animate([{ opacity: 1 }, { opacity: 0 }], { duration: d, fill: "forwards" });
+    $("real").animate([{ opacity: 0, transform: "scale(1)" }, { opacity: 1, transform: "scale(1.04)", offset: .6 }, { opacity: 1, transform: "scale(1)" }],
+      { duration: d * 2, fill: "forwards", easing: "ease-out" });
+    await sleep(d);
+    $("meaning").animate([{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "translateY(0)" }], { duration: d, fill: "forwards", easing: "ease-out" });
+  }
+
+  words.forEach(w => {
+    const b = document.createElement("button");
+    b.innerHTML = `<span class="ar">${w.label}</span>`;
+    b.onclick = () => { cur = w; [...$("picker").children].forEach(x => x.setAttribute("aria-pressed", String(x === b))); reset(); };
+    $("picker").appendChild(b);
+  });
+  $("picker").children[1].setAttribute("aria-pressed", "true");
+  $("play").onclick = () => { speed = 1; play(); };
+  $("slow").onclick = () => { speed = 3; play(); };
+  $("rm").onclick = () => { reduced = !reduced; $("rm").setAttribute("aria-pressed", String(reduced)); reset(); };
+  document.fonts.ready.then(reset);
+</script>
+</body>
+</html>
