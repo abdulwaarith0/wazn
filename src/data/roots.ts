@@ -12,6 +12,12 @@ export const roots: Root[] = [
   { id: "khrj", letters: ["خ", "ر", "ج"], translit: "kh-r-j", gist: "going out" },
   { id: "zre", letters: ["ز", "ر", "ع"], translit: "z-r-ʿ", gist: "planting" },
   { id: "sjd", letters: ["س", "ج", "د"], translit: "s-j-d", gist: "prostrating" },
+  // Phase 3: weak and doubled roots (devpost/word-list-phase3-draft.md, learner-reviewed), easiest change first.
+  { id: "wsl", letters: ["و", "ص", "ل"], translit: "w-ṣ-l", gist: "arriving" },
+  { id: "qwl", letters: ["ق", "و", "ل"], translit: "q-w-l", gist: "saying" },
+  { id: "bye", letters: ["ب", "ي", "ع"], translit: "b-y-ʿ", gist: "selling" },
+  { id: "mdd", letters: ["م", "د", "د"], translit: "m-d-d", gist: "stretching" },
+  { id: "dew", letters: ["د", "ع", "و"], translit: "d-ʿ-w", gist: "calling" },
 ];
 
 export const rootById = (id: string) => roots.find((r) => r.id === id);
