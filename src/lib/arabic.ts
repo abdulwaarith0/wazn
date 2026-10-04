@@ -51,6 +51,36 @@ export function placeholder(word: string, roles: string): string {
 export const rootLettersOf = (word: string, roles: string) =>
   letters(word).filter((_, i) => roles[i] === "r").map(base);
 
+/**
+ * Which letters change between a word's regular form and the real word (weak and doubled roots).
+ * Letters are matched in order by their base letter (longest common subsequence); a letter with no
+ * match, or whose vowel marks differ from its match, is "changing". قَوَلَ → قالَ: the و and the ا.
+ */
+export function changedLetters(regular: string, real: string): { regular: boolean[]; real: boolean[] } {
+  const a = letters(regular);
+  const b = letters(real);
+  // lcs[i][j]: length of the longest common run of base letters in a[i..] and b[j..]
+  const lcs = Array.from({ length: a.length + 1 }, () => new Array<number>(b.length + 1).fill(0));
+  for (let i = a.length - 1; i >= 0; i--)
+    for (let j = b.length - 1; j >= 0; j--)
+      lcs[i]![j] = base(a[i]!) === base(b[j]!) ? lcs[i + 1]![j + 1]! + 1 : Math.max(lcs[i + 1]![j]!, lcs[i]![j + 1]!);
+
+  const out = { regular: a.map(() => true), real: b.map(() => true) };
+  let i = 0;
+  let j = 0;
+  while (i < a.length && j < b.length) {
+    if (base(a[i]!) === base(b[j]!) && lcs[i]![j] === lcs[i + 1]![j + 1]! + 1) {
+      const same = a[i] === b[j];
+      out.regular[i] = !same;
+      out.real[j] = !same;
+      i++;
+      j++;
+    } else if (lcs[i + 1]![j]! >= lcs[i]![j + 1]!) i++;
+    else j++;
+  }
+  return out;
+}
+
 export type Piece = {
   letter: string; // the word's letter with its marks
   slot: string; // what the slot shows before the root letter arrives
