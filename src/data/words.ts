@@ -77,6 +77,26 @@ export const words: Word[] = [
   { id: "sjd-form1", rootId: "sjd", patternId: "form1", ar: "سَجَدَ", roles: "rrr", translit: "sajada", meaning: "he prostrated" },
   { id: "sjd-faail", rootId: "sjd", patternId: "faail", ar: "سَاجِد", roles: "rprr", translit: "sājid", meaning: "one prostrating" },
   { id: "sjd-place", rootId: "sjd", patternId: "place", ar: "مَسْجِد", roles: "prrr", translit: "masjid", meaning: "mosque", shape: "مَفْعِل" },
+
+  // Phase 2: Forms V-X. Rare (◐) words and the irregular Form VIII cells (ص-ن-ع, ز-ر-ع, د-ر-س)
+  // stay greyed out; the irregular ones return in Phase 3 with the weak roots.
+  { id: "ktb-form6", rootId: "ktb", patternId: "form6", ar: "تَكَاتَبَ", roles: "prprr", translit: "takātaba", meaning: "they wrote to each other" },
+  { id: "ktb-form8", rootId: "ktb", patternId: "form8", ar: "اِكْتَتَبَ", roles: "prprr", translit: "iktataba", meaning: "he subscribed" },
+  { id: "ktb-form10", rootId: "ktb", patternId: "form10", ar: "اِسْتَكْتَبَ", roles: "ppprrr", translit: "istaktaba", meaning: "he asked (someone) to write" },
+  { id: "drs-form6", rootId: "drs", patternId: "form6", ar: "تَدَارَسَ", roles: "prprr", translit: "tadārasa", meaning: "they studied together" },
+  { id: "hkm-form5", rootId: "hkm", patternId: "form5", ar: "تَحَكَّمَ", roles: "prrr", translit: "taḥakkama", meaning: "he controlled" },
+  { id: "hkm-form6", rootId: "hkm", patternId: "form6", ar: "تَحَاكَمَ", roles: "prprr", translit: "taḥākama", meaning: "they went to court" },
+  { id: "hkm-form8", rootId: "hkm", patternId: "form8", ar: "اِحْتَكَمَ", roles: "prprr", translit: "iḥtakama", meaning: "he referred to arbitration" },
+  { id: "hkm-form10", rootId: "hkm", patternId: "form10", ar: "اِسْتَحْكَمَ", roles: "ppprrr", translit: "istaḥkama", meaning: "it became firm" },
+  { id: "elm-form5", rootId: "elm", patternId: "form5", ar: "تَعَلَّمَ", roles: "prrr", translit: "taʿallama", meaning: "he learned" },
+  { id: "elm-form10", rootId: "elm", patternId: "form10", ar: "اِسْتَعْلَمَ", roles: "ppprrr", translit: "istaʿlama", meaning: "he inquired" },
+  { id: "sne-form5", rootId: "sne", patternId: "form5", ar: "تَصَنَّعَ", roles: "prrr", translit: "taṣannaʿa", meaning: "he feigned, affected" },
+  { id: "fth-form5", rootId: "fth", patternId: "form5", ar: "تَفَتَّحَ", roles: "prrr", translit: "tafattaḥa", meaning: "it blossomed" },
+  { id: "fth-form7", rootId: "fth", patternId: "form7", ar: "اِنْفَتَحَ", roles: "pprrr", translit: "infataḥa", meaning: "it opened up" },
+  { id: "fth-form8", rootId: "fth", patternId: "form8", ar: "اِفْتَتَحَ", roles: "prprr", translit: "iftataḥa", meaning: "he inaugurated" },
+  { id: "fth-form10", rootId: "fth", patternId: "form10", ar: "اِسْتَفْتَحَ", roles: "ppprrr", translit: "istaftaḥa", meaning: "he began; sought an opening" },
+  { id: "khrj-form5", rootId: "khrj", patternId: "form5", ar: "تَخَرَّجَ", roles: "prrr", translit: "takharraja", meaning: "he graduated" },
+  { id: "khrj-form10", rootId: "khrj", patternId: "form10", ar: "اِسْتَخْرَجَ", roles: "ppprrr", translit: "istakhraja", meaning: "he extracted" },
 ];
 
 export const wordsOfRoot = (rootId: string) => words.filter((w) => w.rootId === rootId);
