@@ -61,7 +61,7 @@ Commits (learner's standing rule, `spec.md > Decisions and Open Issues`): one fi
   Learner check: Open خ-ر-ج and ف-ت-ح and try the new forms; check the words and meanings are what you approved.
   Commit: `Add verb Forms V-X`
 
-- [ ] **6. The Quiz: find the root and build the word**
+- [x] **6. The Quiz: find the root and build the word**
   Becomes usable: A Quiz reachable from Roots once 3 words are collected (and says so before then), mixing "Find the root" (tap the three root letters, in order, from a tray of 6) and "Build the word" (drag root letters into the placeholder slots), using only collected words. Right answers play the assembly; wrong ones show the correct answer.
   Why now: Needs collected words and the Phase 2 pattern set; drag is the new technique, isolated in one slice.
   PRD ref: `prd.md > Quiz (Phase 2)`, `prd.md > States and Boundaries` (Quiz with too few words), `prd.md > The Core Journey` (step 9)
