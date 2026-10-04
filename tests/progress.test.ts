@@ -1,15 +1,20 @@
 import { describe, expect, it } from "vitest";
 import {
+  allSealed,
   collect,
   collectedCount,
   freshProgress,
+  isSealed,
   loadProgress,
   parseProgress,
   saveProgress,
+  sealedRootIds,
   STORAGE_KEY,
   unlockedRootIds,
 } from "../src/lib/progress";
 import { createStore } from "../src/lib/storage";
+import { words, wordsOfRoot } from "../src/data/words";
+import type { Word } from "../src/data/types";
 
 const withWords = (...ids: string[]) => ids.reduce(collect, freshProgress());
 
@@ -38,6 +43,28 @@ describe("collecting", () => {
 
   it("ignores words that don't exist", () => {
     expect(withWords("ktb-form2").collected).toEqual([]);
+  });
+});
+
+describe("seals", () => {
+  const ktbWords = wordsOfRoot("ktb").map((w) => w.id);
+
+  it("seals a root only when every one of its words is collected", () => {
+    const allButOne = withWords(...ktbWords.slice(1));
+    expect(isSealed(allButOne, "ktb")).toBe(false);
+    expect(isSealed(collect(allButOne, ktbWords[0]!), "ktb")).toBe(true);
+    expect(sealedRootIds(withWords(...ktbWords))).toEqual(["ktb"]);
+  });
+
+  it("loses the seal when the root gains a new word", () => {
+    const p = withWords(...ktbWords);
+    const grown: Word[] = [...wordsOfRoot("ktb"), { ...wordsOfRoot("ktb")[0]!, id: "ktb-new", patternId: "form6" }];
+    expect(isSealed(p, "ktb", grown)).toBe(false);
+  });
+
+  it("knows when every root is sealed", () => {
+    expect(allSealed(withWords(...ktbWords))).toBe(false);
+    expect(allSealed(withWords(...words.map((w) => w.id)))).toBe(true);
   });
 });
 
