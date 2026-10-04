@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { joinFlags, letters, pieces, placeholder, rootLettersOf, withJoiners, ZWJ } from "../src/lib/arabic";
+import { changedLetters, joinFlags, letters, pieces, placeholder, rootLettersOf, withJoiners, ZWJ } from "../src/lib/arabic";
 
 describe("letters", () => {
   it("keeps vowel marks with their letter", () => {
@@ -44,6 +44,21 @@ describe("placeholder", () => {
   });
   it("finds the root letters", () => {
     expect(rootLettersOf("مَكْتَب", "prrr")).toEqual(["ك", "ت", "ب"]);
+  });
+});
+
+describe("changedLetters", () => {
+  it("finds a weak letter that changes", () => {
+    expect(changedLetters("قَوَلَ", "قَالَ")).toEqual({ regular: [false, true, false], real: [false, true, false] });
+  });
+  it("finds a merge: one letter disappears, the other gains a shadda", () => {
+    expect(changedLetters("مَدَدَ", "مَدَّ")).toEqual({ regular: [false, true, true], real: [false, true] });
+  });
+  it("finds a pattern letter that changes", () => {
+    expect(changedLetters("اِصْتَنَعَ", "اِصْطَنَعَ").real).toEqual([false, false, true, false, false]);
+  });
+  it("finds nothing when nothing changes", () => {
+    expect(changedLetters("كَاتِب", "كَاتِب").real.some(Boolean)).toBe(false);
   });
 });
 
