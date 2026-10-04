@@ -63,6 +63,17 @@ export const collectedCount = (p: Progress, rootId: string) =>
 
 export const totalCount = (rootId: string) => wordsOfRoot(rootId).length;
 
+/**
+ * A root is sealed once every word it has in the current build is collected. Because this is
+ * derived, a sealed root that gains new words (Phase 2) loses its seal until they're collected.
+ */
+export const isSealed = (p: Progress, rootId: string, rootWords = wordsOfRoot(rootId)) =>
+  rootWords.length > 0 && rootWords.every((w) => p.collected.includes(w.id));
+
+export const sealedRootIds = (p: Progress) => roots.filter((r) => isSealed(p, r.id)).map((r) => r.id);
+
+export const allSealed = (p: Progress) => roots.every((r) => isSealed(p, r.id));
+
 /** The first root is always open; each next root opens once the one before has UNLOCK_AT words collected. */
 export function unlockedRootIds(p: Progress): string[] {
   const open: string[] = [];
