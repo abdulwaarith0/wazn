@@ -62,7 +62,7 @@ export default function CollectionScreen({ progress, onBack }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {items.map(({ word, pattern }) => (
-                <WordCard key={word.id} word={word} pattern={pattern} />
+                <WordCard key={word.id} word={word} pattern={pattern} mode={progress.mode} />
               ))}
             </div>
           </div>
