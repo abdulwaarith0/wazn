@@ -51,7 +51,7 @@ Commits (learner's standing rule, `spec.md > Decisions and Open Issues`): one fi
   Learner check: Clear site data (or use a private window), open the app and watch the intro; flip the switch and compare the labels in the Workshop and Collection; tap the logo to replay.
   Commit: `Add the mode switch and logo intro`
 
-- [ ] **5. Forms V-X in the Workshop**
+- [x] **5. Forms V-X in the Workshop**
   Becomes usable: Every root's Workshop also shows Forms V, VI, VII, VIII and X (Form IX hidden, with a Grammar-mode note that it's for colours and defects), with the reviewed words and greyed-out tiles for the rest, including the irregular Form VIII cells.
   Why now: Pure data on top of the finished kernel; low risk, and it starts Phase 2. Seals must re-derive correctly when roots gain words.
   PRD ref: `prd.md > Forms V-X (Phase 2)`
