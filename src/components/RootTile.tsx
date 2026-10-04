@@ -1,10 +1,12 @@
 import { useRef } from "react";
 import { animate, useReducedMotion } from "motion/react";
 import type { Root } from "../data/types";
+import Seal from "./Seal";
 
 type Props = {
   root: Root;
   locked: boolean;
+  sealed: boolean;
   count: number;
   total: number;
   onOpen: () => void;
@@ -18,7 +20,7 @@ const Lock = () => (
   </svg>
 );
 
-export default function RootTile({ root, locked, count, total, onOpen, onLocked }: Props) {
+export default function RootTile({ root, locked, sealed, count, total, onOpen, onLocked }: Props) {
   const ref = useRef<HTMLButtonElement>(null);
   const reduced = useReducedMotion();
 
@@ -34,12 +36,17 @@ export default function RootTile({ root, locked, count, total, onOpen, onLocked 
       type="button"
       onClick={tap}
       aria-disabled={locked}
-      aria-label={`${root.translit}, ${root.gist}${locked ? ", locked" : `, ${count} of ${total} words collected`}`}
+      aria-label={`${root.translit}, ${root.gist}${locked ? ", locked" : `, ${count} of ${total} words collected`}${sealed ? ", sealed" : ""}`}
       className={[
         "relative flex flex-col items-center gap-1 rounded-2xl border px-3 pt-3 pb-3.5 transition-colors",
-        locked ? "border-dashed border-line bg-transparent text-muted" : "border-line bg-card hover:border-gold/60",
+        locked
+          ? "border-dashed border-line bg-transparent text-muted"
+          : sealed
+            ? "border-gold/70 bg-card hover:border-gold"
+            : "border-line bg-card hover:border-gold/60",
       ].join(" ")}
     >
+      {sealed && <Seal text={root.letters.join("")} className="absolute -top-2.5 -right-2.5 h-11 w-11 -rotate-6 drop-shadow-sm" />}
       <span lang="ar" dir="rtl" className={`font-arabic text-[40px] leading-[1.35] ${locked ? "opacity-40" : ""}`}>
         {root.letters.join("-")}
       </span>
