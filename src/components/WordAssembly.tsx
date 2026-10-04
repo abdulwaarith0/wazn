@@ -2,7 +2,9 @@ import { useEffect, useImperativeHandle, useRef, useState, type Ref } from "reac
 import { flushSync } from "react-dom";
 import { animate, useReducedMotion } from "motion/react";
 import type { Word } from "../data/types";
+import { assembledForm } from "../data/words";
 import { pieces, withJoiners, type Piece } from "../lib/arabic";
+import ChangeRule from "./ChangeRule";
 import ColouredWord from "./ColouredWord";
 
 // The kernel animation (proven in devpost/research/animation-spike.html):
@@ -13,7 +15,10 @@ import ColouredWord from "./ColouredWord";
 // 3. the placeholder is knocked out, the letter lands with a squash, a ripple, and a
 //    cross-fade from its standalone shape to its joined shape;
 // 4. the pieces fade into the real, colour-coded word and the meaning rises in.
-// Reduced motion skips 1-3 and fades the word in.
+// Weak and doubled roots take two steps (the learner's choice): 1-4 form the regular word the
+// pattern gives (قَوَلَ), its changing letters glow, it turns into the real word (قالَ), and the
+// rule fades in beneath it.
+// Reduced motion skips the flights and fades the real word in, with its rule.
 
 export type AssemblyHandle = {
   /** Form `word`, flying letters out of `rootTiles` (in root-letter order). Resolves when it has landed. */
@@ -23,6 +28,9 @@ export type AssemblyHandle = {
 const STAGGER = 0.18; // seconds between root letters
 const FLIGHT = 0.76; // seconds per flight
 const SETTLE = 0.38; // seconds for the final fade
+
+const GLOW = "0 0 14px rgba(168, 121, 42, 0.95)";
+const NO_GLOW = "0 0 0px rgba(168, 121, 42, 0)";
 
 const sleep = (s: number) => new Promise((r) => setTimeout(r, s * 1000));
 const nextFrame = () => new Promise((r) => requestAnimationFrame(r));
@@ -36,7 +44,9 @@ export default function WordAssembly({
 }) {
   const [shown, setShown] = useState<{ word: Word; run: number } | null>(null);
   const slotsRef = useRef<HTMLDivElement>(null);
+  const regularRef = useRef<HTMLDivElement>(null);
   const realRef = useRef<HTMLDivElement>(null);
+  const ruleRef = useRef<HTMLParagraphElement>(null);
   const meaningRef = useRef<HTMLParagraphElement>(null);
   const runs = useRef(0);
   const overlay = useRef(new Set<HTMLElement>());
@@ -144,16 +154,31 @@ export default function WordAssembly({
       drop(flyer);
     }
 
-    async function settle(slots: HTMLElement, real: HTMLElement, meaning: HTMLElement, calm: boolean) {
+    /** The landed pieces fade into a whole word (the real word, or a changing word's regular form). */
+    async function settle(slots: HTMLElement, word: HTMLElement, calm: boolean) {
       animate(slots, { opacity: 0 }, { duration: SETTLE });
       animate(
-        real,
+        word,
         calm ? { opacity: [0, 1] } : { opacity: [0, 1, 1], scale: [1, 1.04, 1] },
         { duration: SETTLE * 2, times: calm ? undefined : [0, 0.6, 1], ease: "easeOut" },
       );
       await sleep(SETTLE);
-      await animate(meaning, { opacity: [0, 1], y: [6, 0] }, { duration: SETTLE, ease: "easeOut" });
     }
+
+    /** Step two for weak and doubled roots: the regular form's changing letters glow, then it turns into the real word. */
+    async function transform(regular: HTMLElement, real: HTMLElement) {
+      await sleep(0.45);
+      const leaving = [...regular.querySelectorAll<HTMLElement>("[data-changed]")];
+      leaving.forEach((el) => animate(el, { textShadow: [NO_GLOW, GLOW], color: "#a8792a" }, { duration: 0.35 }));
+      await sleep(0.6);
+      animate(regular, { opacity: [1, 0], y: [0, -8], filter: ["blur(0px)", "blur(5px)"] }, { duration: 0.45, ease: "easeIn" });
+      await animate(real, { opacity: [0, 1], y: [8, 0], filter: ["blur(5px)", "blur(0px)"] }, { duration: 0.45, ease: "easeOut" });
+      real
+        .querySelectorAll<HTMLElement>("[data-changed]")
+        .forEach((el) => animate(el, { textShadow: [GLOW, GLOW, NO_GLOW] }, { duration: 1.4, times: [0, 0.4, 1] }));
+    }
+
+    const rise = (el: HTMLElement | null) => el && animate(el, { opacity: [0, 1], y: [6, 0] }, { duration: SETTLE, ease: "easeOut" });
 
     return {
       async play(word, rootTiles) {
@@ -163,14 +188,21 @@ export default function WordAssembly({
         await nextFrame();
         const slots = slotsRef.current;
         const real = realRef.current;
+        const regular = regularRef.current;
         const meaning = meaningRef.current;
         if (!slots || !real || !meaning) return;
 
-        if (reduced) return settle(slots, real, meaning, true);
+        if (reduced) {
+          await settle(slots, real, true);
+          rise(ruleRef.current);
+          await rise(meaning);
+          return;
+        }
 
+        const form = assembledForm(word);
         const fontSize = parseFloat(getComputedStyle(slots).fontSize);
         const slotEls = [...slots.children] as HTMLElement[];
-        const flights = pieces(word.ar, word.roles).flatMap((piece, i) => {
+        const flights = pieces(form.ar, form.roles).flatMap((piece, i) => {
           const slot = slotEls[i];
           const tile = rootTiles[piece.rootIndex];
           const letter = tile?.textContent;
@@ -178,12 +210,20 @@ export default function WordAssembly({
         });
         await Promise.all(flights);
         rootTiles.forEach((t) => animate(t, { opacity: 1 }, { duration: 0.4 }));
-        await settle(slots, real, meaning, false);
+        if (word.change && regular) {
+          await settle(slots, regular, false);
+          await transform(regular, real);
+          rise(ruleRef.current);
+        } else {
+          await settle(slots, real, false);
+        }
+        await rise(meaning);
       },
     };
   }, [reduced]);
 
-  const ps = shown ? pieces(shown.word.ar, shown.word.roles) : [];
+  const form = shown ? assembledForm(shown.word) : null;
+  const ps = form ? pieces(form.ar, form.roles) : [];
 
   return (
     <div>
@@ -197,8 +237,13 @@ export default function WordAssembly({
                 </span>
               ))}
             </div>
+            {shown.word.change && (
+              <div ref={regularRef} aria-hidden="true" style={{ opacity: 0 }} className="absolute inset-0 text-center whitespace-nowrap">
+                <ColouredWord word={shown.word} form="regular" markChanges />
+              </div>
+            )}
             <div ref={realRef} style={{ opacity: 0 }} className="absolute inset-0 text-center whitespace-nowrap">
-              <ColouredWord word={shown.word} />
+              <ColouredWord word={shown.word} markChanges />
             </div>
           </div>
         ) : (
@@ -207,6 +252,11 @@ export default function WordAssembly({
           </p>
         )}
       </div>
+      {shown?.word.change && (
+        <p key={`rule-${shown.run}`} ref={ruleRef} style={{ opacity: 0 }} className="-mt-3 mb-1 text-center text-sm text-gold italic">
+          <ChangeRule rule={shown.word.change.rule} />
+        </p>
+      )}
       <p
         key={shown?.run ?? 0}
         ref={meaningRef}
