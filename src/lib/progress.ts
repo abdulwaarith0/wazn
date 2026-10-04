@@ -58,7 +58,11 @@ export const saveProgress = (store: Store, p: Progress) => store.set(STORAGE_KEY
 export const collect = (p: Progress, wordId: string): Progress =>
   p.collected.includes(wordId) || !knownWordIds.has(wordId) ? p : { ...p, collected: [...p.collected, wordId] };
 
-export const collectedCount = (p: Progress, rootId: string) =>
+export const setMode = (p: Progress, mode: Mode): Progress => (p.mode === mode ? p : { ...p, mode });
+
+export const markIntroSeen = (p: Progress): Progress => (p.introSeen ? p : { ...p, introSeen: true });
+
+export const collectedCount =(p: Progress, rootId: string) =>
   wordsOfRoot(rootId).filter((w) => p.collected.includes(w.id)).length;
 
 export const totalCount = (rootId: string) => wordsOfRoot(rootId).length;
