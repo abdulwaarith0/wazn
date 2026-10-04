@@ -73,7 +73,7 @@ export default function Workshop({ root, mode, collected, onCollect, onBack }: P
       <div dir="rtl" className="flex justify-center gap-4">
         {root.letters.map((l, i) => (
           <div
-            key={l}
+            key={i}
             ref={(el) => {
               if (el) tiles.current[i] = el;
             }}
