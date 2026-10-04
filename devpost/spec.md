@@ -152,6 +152,7 @@ type Word = {
 - Content comes from `devpost/word-list-draft.md` (learner-reviewed). Phase 2 words are added to the same files with Phase 2 patterns.
 - **The placeholder is derived, not stored:** replace each `r` letter, in order, with ف, ع, ل and keep its vowel marks. So كَاتِب + "rprr" gives فَاعِل.
 - **A test guards every word:** exactly three `r` letters, and they spell the root letters in order.
+- **Weak and doubled roots (Phase 3, added during the build):** a word whose letters change carries `change: { regular, regularRoles, rule }`, e.g. قالَ has `{ regular: "قَوَلَ", regularRoles: "rrr", rule: "و between two vowels becomes ا" }`. The assembly flies the root into the regular form, then morphs it into the real word; the letters that change are found by matching the two forms letter by letter (`changedLetters` in `lib/arabic.ts`). The word test checks the regular form against the root and pattern.
 
 ### Progress (in the browser, read-write)
 ```ts
