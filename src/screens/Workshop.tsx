@@ -7,17 +7,19 @@ import PatternTile from "../components/PatternTile";
 import RootText from "../components/RootText";
 import WordAssembly, { type AssemblyHandle } from "../components/WordAssembly";
 import RewardBurst from "../components/moments/RewardBurst";
+import type { Mode } from "../lib/progress";
 
 const PHASE = 1;
 
 type Props = {
   root: Root;
+  mode: Mode;
   collected: string[];
   onCollect: (wordId: string) => boolean;
   onBack: () => void;
 };
 
-export default function Workshop({ root, collected, onCollect, onBack }: Props) {
+export default function Workshop({ root, mode, collected, onCollect, onBack }: Props) {
   const tiles = useRef<HTMLDivElement[]>([]);
   const assembly = useRef<AssemblyHandle>(null);
   const forming = useRef(false);
@@ -110,6 +112,8 @@ export default function Workshop({ root, collected, onCollect, onBack }: Props) 
               <PatternTile
                 key={p.id}
                 pattern={p}
+                word={word}
+                mode={mode}
                 available={!!word}
                 collected={!!word && collected.includes(word.id)}
                 active={active === p.id}
