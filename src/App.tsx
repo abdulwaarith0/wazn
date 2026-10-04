@@ -1,36 +1,43 @@
 import { useState } from "react";
 import { rootById } from "./data/roots";
 import Logo from "./components/Logo";
+import SealMoment from "./components/moments/SealMoment";
 import UnlockMoment from "./components/moments/UnlockMoment";
 import { useProgress } from "./hooks/useProgress";
+import CollectionScreen from "./screens/CollectionScreen";
 import RootsScreen from "./screens/RootsScreen";
 import Workshop from "./screens/Workshop";
 
-type Screen = { name: "roots" } | { name: "workshop"; rootId: string };
+type Screen = { name: "roots" } | { name: "collection" } | { name: "workshop"; rootId: string };
+type Moment = { kind: "seal" | "unlock"; rootId: string };
 
 export default function App() {
   const { progress, collectWord } = useProgress();
   const [screen, setScreen] = useState<Screen>({ name: "roots" });
-  const [unlocked, setUnlocked] = useState<string | null>(null);
+  // Moments waiting to be shown, one at a time: a seal first, then an unlock.
+  const [moments, setMoments] = useState<Moment[]>([]);
 
-  const openRoot = (rootId: string) => {
-    setUnlocked(null);
-    setScreen({ name: "workshop", rootId });
+  const go = (next: Screen) => {
+    setMoments([]);
+    setScreen(next);
     window.scrollTo({ top: 0 });
   };
 
   const collect = (wordId: string) => {
-    const result = collectWord(wordId);
-    // Let the reward burst play before the unlock card arrives.
-    if (result.unlocked) {
-      const id = result.unlocked;
-      setTimeout(() => setUnlocked(id), 700);
-    }
-    return result.added;
+    const { added, sealed, unlocked } = collectWord(wordId);
+    const queued: Moment[] = [
+      ...(sealed ? [{ kind: "seal" as const, rootId: sealed }] : []),
+      ...(unlocked ? [{ kind: "unlock" as const, rootId: unlocked }] : []),
+    ];
+    // Let the reward burst play before a moment arrives.
+    if (queued.length) setTimeout(() => setMoments((m) => [...m, ...queued]), 700);
+    return added;
   };
 
+  const next = () => setMoments((m) => m.slice(1));
+  const moment = moments[0];
+  const momentRoot = moment && rootById(moment.rootId);
   const root = screen.name === "workshop" ? rootById(screen.rootId) : undefined;
-  const newRoot = unlocked ? rootById(unlocked) : undefined;
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-3xl flex-col px-4 pb-16">
@@ -47,13 +54,29 @@ export default function App() {
             root={root}
             collected={progress.collected}
             onCollect={collect}
-            onBack={() => setScreen({ name: "roots" })}
+            onBack={() => go({ name: "roots" })}
           />
+        ) : screen.name === "collection" ? (
+          <CollectionScreen progress={progress} onBack={() => go({ name: "roots" })} />
         ) : (
-          <RootsScreen progress={progress} onOpenRoot={openRoot} />
+          <RootsScreen
+            progress={progress}
+            onOpenRoot={(rootId) => go({ name: "workshop", rootId })}
+            onOpenCollection={() => go({ name: "collection" })}
+          />
         )}
       </main>
-      {newRoot && <UnlockMoment root={newRoot} onOpen={() => openRoot(newRoot.id)} onClose={() => setUnlocked(null)} />}
+      {moment?.kind === "seal" && momentRoot && (
+        <SealMoment key={`seal-${momentRoot.id}`} root={momentRoot} onCollection={() => go({ name: "collection" })} onClose={next} />
+      )}
+      {moment?.kind === "unlock" && momentRoot && (
+        <UnlockMoment
+          key={`unlock-${momentRoot.id}`}
+          root={momentRoot}
+          onOpen={() => go({ name: "workshop", rootId: momentRoot.id })}
+          onClose={next}
+        />
+      )}
     </div>
   );
 }
