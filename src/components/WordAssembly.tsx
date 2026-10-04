@@ -27,7 +27,13 @@ const SETTLE = 0.38; // seconds for the final fade
 const sleep = (s: number) => new Promise((r) => setTimeout(r, s * 1000));
 const nextFrame = () => new Promise((r) => requestAnimationFrame(r));
 
-export default function WordAssembly({ ref }: { ref?: Ref<AssemblyHandle> }) {
+export default function WordAssembly({
+  ref,
+  emptyText = "Tap a pattern below to pour the root into it.",
+}: {
+  ref?: Ref<AssemblyHandle>;
+  emptyText?: string;
+}) {
   const [shown, setShown] = useState<{ word: Word; run: number } | null>(null);
   const slotsRef = useRef<HTMLDivElement>(null);
   const realRef = useRef<HTMLDivElement>(null);
@@ -197,7 +203,7 @@ export default function WordAssembly({ ref }: { ref?: Ref<AssemblyHandle> }) {
           </div>
         ) : (
           <p className="absolute inset-0 flex items-center justify-center font-sans text-base leading-normal text-muted" dir="ltr">
-            Tap a pattern below to pour the root into it.
+            {emptyText}
           </p>
         )}
       </div>
