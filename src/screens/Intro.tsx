@@ -57,7 +57,7 @@ export default function Intro({ onDone }: { onDone: () => void }) {
       <div dir="rtl" className="flex justify-center gap-4">
         {LETTERS.map((l, i) => (
           <div
-            key={l}
+            key={i}
             ref={(el) => {
               if (el) tiles.current[i] = el;
             }}
