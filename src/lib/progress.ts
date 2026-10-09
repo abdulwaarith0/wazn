@@ -62,7 +62,13 @@ export const setMode = (p: Progress, mode: Mode): Progress => (p.mode === mode ?
 
 export const markIntroSeen = (p: Progress): Progress => (p.introSeen ? p : { ...p, introSeen: true });
 
-export const collectedCount =(p: Progress, rootId: string) =>
+/** A word's recording plays by itself only the first time it forms; after that, on tap. */
+export const shouldAutoPlay = (heard: string[], wordId: string, hasAudio: boolean) => hasAudio && !heard.includes(wordId);
+
+export const markHeard = (p: Progress, wordId: string): Progress =>
+  p.heard.includes(wordId) ? p : { ...p, heard: [...p.heard, wordId] };
+
+export const collectedCount = (p: Progress, rootId: string) =>
   wordsOfRoot(rootId).filter((w) => p.collected.includes(w.id)).length;
 
 export const totalCount = (rootId: string) => wordsOfRoot(rootId).length;

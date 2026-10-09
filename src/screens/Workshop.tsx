@@ -1,12 +1,16 @@
 import { useRef, useState } from "react";
 import type { Pattern, Root } from "../data/types";
-import { patterns } from "../data/patterns";
+import { patternById, patterns } from "../data/patterns";
 import { wordFor, wordsOfRoot } from "../data/words";
 import Ornament from "../components/Ornament";
 import PatternTile from "../components/PatternTile";
 import RootText from "../components/RootText";
 import WordAssembly, { type AssemblyHandle } from "../components/WordAssembly";
 import RewardBurst from "../components/moments/RewardBurst";
+import AudioButton from "../components/AudioButton";
+import { useAudio } from "../hooks/useAudio";
+import { patternAudio, wordAudio } from "../lib/audio";
+import { shouldAutoPlay } from "../lib/progress";
 import type { Mode } from "../lib/progress";
 
 const PHASE = 2;
@@ -19,20 +23,27 @@ type Props = {
   root: Root;
   mode: Mode;
   collected: string[];
+  heard: string[];
   onCollect: (wordId: string) => boolean;
+  onHeard: (wordId: string) => void;
   onBack: () => void;
 };
 
-export default function Workshop({ root, mode, collected, onCollect, onBack }: Props) {
+export default function Workshop({ root, mode, collected, heard, onCollect, onHeard, onBack }: Props) {
   const tiles = useRef<HTMLDivElement[]>([]);
   const assembly = useRef<AssemblyHandle>(null);
   const forming = useRef(false);
   const [active, setActive] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [bursts, setBursts] = useState(0);
+  const [formed, setFormed] = useState<string | null>(null);
+  const play = useAudio();
   const rootText = root.letters.join("-");
   const rootWords = wordsOfRoot(root.id);
   const count = rootWords.filter((w) => collected.includes(w.id)).length;
+  const formedWord = formed ? rootWords.find((w) => w.id === formed) : undefined;
+  const formedClip = formedWord && wordAudio.get(formedWord.id);
+  const patternClip = formedWord && patternAudio.get(formedWord.patternId);
 
   const pick = async (pattern: Pattern) => {
     const word = wordFor(root.id, pattern.id);
@@ -43,6 +54,13 @@ export default function Workshop({ root, mode, collected, onCollect, onBack }: P
     setActive(pattern.id);
     try {
       await assembly.current.play(word, tiles.current);
+      // A recording plays by itself the first time its word forms; afterwards, from the speaker icon.
+      const clip = wordAudio.get(word.id);
+      if (clip && shouldAutoPlay(heard, word.id, true)) {
+        play(clip);
+        onHeard(word.id);
+      }
+      setFormed(word.id);
       // A new word is collected once it has landed; re-forming a collected word just replays it.
       if (onCollect(word.id)) setBursts((n) => n + 1);
     } finally {
@@ -98,6 +116,25 @@ export default function Workshop({ root, mode, collected, onCollect, onBack }: P
         </div>
         {bursts > 0 && <RewardBurst key={bursts} />}
       </div>
+
+      {formedWord && (formedClip || patternClip) && (
+        <div className="-mt-2 flex justify-center gap-2">
+          {formedClip && (
+            <AudioButton label={`Hear ${formedWord.translit}`} onPlay={() => play(formedClip)}>
+              <bdi lang="ar" dir="rtl" className="font-arabic text-base text-ink">
+                {formedWord.ar}
+              </bdi>
+            </AudioButton>
+          )}
+          {patternClip && (
+            <AudioButton label="Hear the pattern" onPlay={() => play(patternClip)}>
+              <bdi lang="ar" dir="rtl" className="font-arabic text-base text-gold">
+                {patternById(formedWord.patternId)?.template}
+              </bdi>
+            </AudioButton>
+          )}
+        </div>
+      )}
 
       <p aria-live="polite" className="min-h-6 text-center text-sm text-muted">
         {note && (
