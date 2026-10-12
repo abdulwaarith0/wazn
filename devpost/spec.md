@@ -116,7 +116,7 @@ Available once 3 words are collected. Alternates **Find the root** (a collected 
 PRD ref: `prd.md > Quiz (Phase 2)`.
 
 ### AudioButton and useAudio (Phase 3)
-Plays `/audio/words/<file>.mp3` or `/audio/patterns/<file>.mp3` with a plain `HTMLAudioElement`. Auto-plays only the first time a word forms (tracked in `progress.heard`); no icon when the file isn't in the manifest.
+Plays clips from `src/audio/words/<word id>.mp3` or `src/audio/patterns/<pattern id>.mp3` (found automatically with Vite's `import.meta.glob`; moved from `public/audio` during the build) with a plain `HTMLAudioElement`. Auto-plays only the first time a word forms (tracked in `progress.heard`); no icon when the file isn't in the manifest.
 PRD ref: `prd.md > Audio (Phase 3)`.
 
 ## Data Model
@@ -179,7 +179,7 @@ wazn/
 ├── tsconfig.json
 ├── eslint.config.js
 ├── public/
-│   └── audio/                  # Phase 3: patterns/*.mp3, words/*.mp3, CREDITS.md
+│   └── (audio moved to src/audio during the build: see Revisions in checklist.md)
 ├── src/
 │   ├── main.tsx                # mounts <App/>, imports fonts and styles
 │   ├── App.tsx                 # screen switching + progress provider
