@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wazn App Map</title>
+<style>
+  :root {
+    --paper: #f6efe1; --card: #fbf7ee; --ink: #2a2118; --muted: #6d5f4e;
+    --line: #dccfb6; --gold: #a8792a; --gold-soft: #d9b877; --code: #efe5d1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #1d1813; --card: #262019; --ink: #f1e8d8; --muted: #b5a68f;
+      --line: #463b2e; --gold: #d4a64f; --gold-soft: #8a6b34; --code: #31291f; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font: 600 2rem/1.2 Georgia, serif; margin: 0 0 4px; }
+  h1 .ar { font-family: "Amiri", "Traditional Arabic", serif; color: var(--gold); margin-left: 8px; }
+  h2 { font: 600 1.25rem/1.3 Georgia, serif; margin: 40px 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+  h3 { font-size: 1rem; margin: 0 0 4px; }
+  p { margin: 0 0 12px; }
+  .lede { color: var(--muted); }
+  .ar { font-family: "Amiri", "Traditional Arabic", serif; }
+  code { font: 0.88em/1.4 ui-monospace, Consolas, monospace; background: var(--code); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--code); padding: 12px 14px; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; }
+  pre code { background: none; padding: 0; }
+  .pieces { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); padding: 0; list-style: none; }
+  .pieces li, .stop, .practice { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  .pieces li b { display: block; }
+  .pieces li span { color: var(--muted); font-size: 0.92rem; }
+  figure { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+  figure svg { width: 100%; height: auto; display: block; }
+  figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 8px; }
+  svg .box { fill: var(--paper); stroke: var(--line); stroke-width: 1.5; }
+  svg .box.kernel { stroke: var(--gold); stroke-width: 2; }
+  svg .t { fill: var(--ink); font: 600 13px system-ui, sans-serif; }
+  svg .s { fill: var(--muted); font: 11px ui-monospace, Consolas, monospace; }
+  svg .arrow { stroke: var(--gold); stroke-width: 1.8; fill: none; marker-end: url(#head); }
+  svg #head path { fill: var(--gold); }
+  ol.route { padding: 0; list-style: none; counter-reset: stop; display: grid; gap: 10px; }
+  ol.route li { counter-increment: stop; }
+  .stop h3::before { content: counter(stop) ". "; color: var(--gold); }
+  .tag { display: inline-block; font-size: 0.78rem; color: var(--muted); border: 1px solid var(--line); border-radius: 99px; padding: 0 8px; margin-left: 6px; vertical-align: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.94rem; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  details { margin-top: 8px; }
+  summary { cursor: pointer; color: var(--gold); }
+  summary:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .foot { color: var(--muted); font-size: 0.9rem; }
+  @media (max-width: 520px) { table, thead, tbody, tr, th, td { display: block; } thead { display: none; } td { border: 0; padding: 2px 0; } tr { border-bottom: 1px solid var(--line); padding: 8px 0; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Wazn app map <span class="ar" lang="ar" dir="rtl">وَزْن</span></h1>
+  <p class="lede">A guide to where things live in Wazn. In the app you pour a three-letter Arabic root into a pattern (a <i>wazn</i>), watch the letters fly into place, and collect the word that results.</p>
+
+  <h2>The main pieces</h2>
+  <ul class="pieces">
+    <li><b>Screens</b><span><code>src/screens/</code>: Intro, Roots, Workshop, Collection and Quiz. <code>src/App.tsx</code> switches between them.</span></li>
+    <li><b>The animation</b><span><code>src/components/WordAssembly.tsx</code>: letters fly from their tiles into the ف ع ل slots and join into the real word.</span></li>
+    <li><b>Arabic text</b><span><code>src/lib/arabic.ts</code> splits a word into letters with their vowel marks and adds invisible joiners, so each piece keeps its joined shape.</span></li>
+    <li><b>Content</b><span><code>src/data/</code>: roots, patterns and the reviewed word list (<code>words.ts</code>).</span></li>
+    <li><b>Progress</b><span><code>src/lib/progress.ts</code> holds the rules (collect, unlock, seal), and <code>src/lib/storage.ts</code> saves them to localStorage.</span></li>
+    <li><b>Tests</b><span><code>tests/</code>: joining, word data, progress, labels, quiz and audio file names (Vitest).</span></li>
+  </ul>
+
+  <h2>One action, end to end: tapping a pattern</h2>
+  <figure>
+    <svg viewBox="0 0 720 300" role="img" aria-labelledby="dia-title dia-desc">
+      <title id="dia-title">What happens when you tap a pattern tile</title>
+      <desc id="dia-desc">PatternTile calls Workshop's pick function, which calls WordAssembly.play to animate the word. When it lands, Workshop calls onCollect; App's collect calls useProgress's collectWord, which saves to localStorage and may queue a seal or unlock moment.</desc>
+      <defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
+
+      <rect class="box" x="10" y="20" width="200" height="64" rx="8"/>
+      <text class="t" x="24" y="46">Tap a pattern tile</text>
+      <text class="s" x="24" y="66">PatternTile.tsx · onPick</text>
+
+      <rect class="box" x="260" y="20" width="200" height="64" rx="8"/>
+      <text class="t" x="274" y="46">pick(pattern)</text>
+      <text class="s" x="274" y="66">screens/Workshop.tsx</text>
+
+      <rect class="box kernel" x="510" y="20" width="200" height="64" rx="8"/>
+      <text class="t" x="524" y="46">play(word, rootTiles)</text>
+      <text class="s" x="524" y="66">WordAssembly.tsx · fly()</text>
+
+      <rect class="box" x="510" y="130" width="200" height="64" rx="8"/>
+      <text class="t" x="524" y="156">The real word appears</text>
+      <text class="s" x="524" y="176">settle() · transform()</text>
+
+      <rect class="box" x="260" y="130" width="200" height="64" rx="8"/>
+      <text class="t" x="274" y="156">collect → collectWord</text>
+      <text class="s" x="274" y="176">App.tsx · useProgress.ts</text>
+
+      <rect class="box" x="10" y="130" width="200" height="64" rx="8"/>
+      <text class="t" x="24" y="156">Saved</text>
+      <text class="s" x="24" y="176">localStorage (progress.ts)</text>
+
+      <rect class="box" x="260" y="226" width="200" height="56" rx="8"/>
+      <text class="t" x="274" y="250">Burst, seal or unlock</text>
+      <text class="s" x="274" y="268">components/moments/</text>
+
+      <path class="arrow" d="M210 52 H256"/>
+      <path class="arrow" d="M460 52 H506"/>
+      <path class="arrow" d="M610 84 V126"/>
+      <path class="arrow" d="M510 162 H464"/>
+      <path class="arrow" d="M260 162 H214"/>
+      <path class="arrow" d="M360 194 V222"/>
+    </svg>
+    <figcaption>The gold box is the core animation. Taps are ignored while a word is still forming (<code>forming.current</code> in <code>pick</code>).</figcaption>
+  </figure>
+
+  <h2>Route through the code <span class="tag">reference, not toured</span></h2>
+  <ol class="route">
+    <li class="stop">
+      <h3>The tap: <code>src/screens/Workshop.tsx</code></h3>
+      <p>Search for <code>const pick = async</code>. It looks up the word for this root and pattern (<code>wordFor</code>), waits for the animation to finish, then plays any audio and collects the word. Collecting happens <em>after</em> the word lands, so the reward never arrives before the word does.</p>
+    </li>
+    <li class="stop">
+      <h3>The flight: <code>src/components/WordAssembly.tsx</code></h3>
+      <p>Search for <code>async function fly(</code>. It uses FLIP: measure the tile and the slot, start the flyer on the slot, push it back to the tile with <code>dx</code>/<code>dy</code>, then animate that offset to 0 along an arc. At 72% of the flight the letter cross-fades from its standalone shape to its joined shape. Weak and doubled roots then run <code>transform()</code>: the regular form's changing letters glow and it turns into the real word.</p>
+      <details>
+        <summary>The flight keyframes</summary>
+<pre><code>x:      [dx, dx * 0.45, 0, 0, 0],
+y:      [dy, dy * 0.45 - 46, 0, -4, 0],        // -46 = arc height, -4 = bounce
+scaleX: [s0, s0 * 1.35, 1.06, 0.98, 1],        // squash wide on landing...
+scaleY: [s0, s0 * 1.35, 0.9, 1.04, 1],         // ...and short, then spring back
+times:  [0, 0.5, 0.86, 0.94, 1],               // share of FLIGHT (0.76 s)</code></pre>
+      </details>
+    </li>
+    <li class="stop">
+      <h3>Saving: <code>src/hooks/useProgress.ts</code> → <code>src/lib/progress.ts</code></h3>
+      <p>Search for <code>collectWord</code>. It runs the pure rule <code>collect()</code> (collecting a word again changes nothing), saves the result, and compares unlocks and seals before and after to tell <code>App</code> which moment to show. Damaged or old saved data starts fresh (<code>parseProgress</code>), and blocked storage falls back to memory (<code>createStore</code>).</p>
+    </li>
+  </ol>
+
+  <h2>To change this, start here</h2>
+  <table>
+    <thead><tr><th>You want to…</th><th>Start here</th></tr></thead>
+    <tbody>
+      <tr><td>Retune the flight (speed, arc, squash)</td><td><code>STAGGER</code>, <code>FLIGHT</code>, <code>SETTLE</code> at the top of <code>WordAssembly.tsx</code>, and the keyframes in <code>fly()</code></td></tr>
+      <tr><td>Add a word or a root</td><td><code>src/data/words.ts</code> and <code>roots.ts</code>. <code>tests/words.test.ts</code> checks every word's root letters still spell its root.</td></tr>
+      <tr><td>Change how many words unlock the next root</td><td><code>UNLOCK_AT</code> in <code>src/lib/progress.ts</code></td></tr>
+      <tr><td>Change Beginner/Grammar labels</td><td><code>patternLabel</code> in <code>src/lib/labels.ts</code></td></tr>
+      <tr><td>Add audio</td><td>Drop <code>&lt;word id&gt;.mp3</code> into <code>src/audio/words/</code> (or <code>&lt;pattern id&gt;.mp3</code> into <code>patterns/</code>) and credit it in <code>src/audio/CREDITS.md</code>. The speaker icon appears on its own.</td></tr>
+      <tr><td>Change colours or fonts</td><td>The <code>@theme</code> block in <code>src/styles.css</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2>A practice to reuse</h2>
+  <div class="practice">
+    <p><b>Prove the riskiest animation by itself, before building around it.</b> The hard part of Wazn was flying separate Arabic letters into slots without breaking how they join. Before any app code existed, a throwaway page (<code>devpost/research/animation-spike.html</code>) proved the FLIP flight and the joiner trick. It became slice 1, and the rest of the app was built around something that already worked. The joining rules then got tests (<code>tests/arabic.test.ts</code>, e.g. كَاتِب + <code>"rprr"</code> → فَاعِل), and the timings live in named constants, so retuning the feel never touches the logic.</p>
+    <p>For a future project: when one effect carries the whole idea, build it as a standalone spike first, move what can be checked (data, text rules) into tests, and keep the parts you'll tune by feel (durations, distances, easing) as named values in one place.</p>
+  </div>
+
+  <h2>Run it again</h2>
+<pre><code>npm install
+npm run dev            # http://localhost:5173
+npm run dev -- --host  # also on your phone, via the Network URL
+npm test               # Vitest
+npm run lint &amp;&amp; npm run build</code></pre>
+  <p class="foot">Snapshot of the code at commit <code>b6d0dcb</code> (12 October 2026). The code may change after this, so check paths if something has moved. Audio (slice 8) is wired up but has no recordings yet.</p>
+</main>
+</body>
+</html>
