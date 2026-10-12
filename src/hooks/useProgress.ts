@@ -3,6 +3,7 @@ import {
   collect,
   isSealed,
   loadProgress,
+  markHeard,
   markIntroSeen,
   saveProgress,
   setMode,
@@ -51,5 +52,7 @@ export function useProgress() {
   const changeMode = useCallback((mode: Mode) => update(setMode(latest.current, mode)), [update]);
   const finishIntro = useCallback(() => update(markIntroSeen(latest.current)), [update]);
 
-  return { progress, collectWord, changeMode, finishIntro };
+  const hear = useCallback((wordId: string) => update(markHeard(latest.current, wordId)), [update]);
+
+  return { progress, collectWord, changeMode, finishIntro, hear };
 }
