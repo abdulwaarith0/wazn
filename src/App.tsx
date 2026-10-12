@@ -14,7 +14,7 @@ type Screen = { name: "intro" } | { name: "roots" } | { name: "collection" } | {
 type Moment = { kind: "seal" | "unlock"; rootId: string };
 
 export default function App() {
-  const { progress, collectWord, changeMode, finishIntro } = useProgress();
+  const { progress, collectWord, changeMode, finishIntro, hear } = useProgress();
   // The intro plays on the very first open only; the logo replays it.
   const [screen, setScreen] = useState<Screen>(() => (progress.introSeen ? { name: "roots" } : { name: "intro" }));
   // Moments waiting to be shown, one at a time: a seal first, then an unlock.
@@ -74,7 +74,9 @@ export default function App() {
             root={root}
             mode={progress.mode}
             collected={progress.collected}
+            heard={progress.heard}
             onCollect={collect}
+            onHeard={hear}
             onBack={() => go({ name: "roots" })}
           />
         ) : screen.name === "quiz" ? (
