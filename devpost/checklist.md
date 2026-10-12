@@ -103,15 +103,15 @@ Commits (learner's standing rule, `spec.md > Decisions and Open Issues`): one fi
 
 ## Code Tour and App Map
 
-- [ ] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
-- [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
-- [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
+- [x] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
+- [x] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
+- [x] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
 
-Activity and evidence: [what actually happened; real document/test/code references; unfinished work if interrupted]
-Route and stops: [actual paths and symbols; guided stops completed, or reference-only route]
-Edit outcome: [tried/kept/reverted/declined/not applicable; verification if changed]
-Reflection: [offered/answered/declined/already covered — personal answer belongs only in the ignored profile]
-Activity mode: [live app and editor, explicit static fallback, focused alternative, prior practice, or recap]
+Activity and evidence: For the learner's goal ("get better at animations"), the agent walked through the flight keyframes in `fly()` in `src/components/WordAssembly.tsx` in chat (FLIP offset, arc height, squash and stretch, the cross-fade to the joined shape at 72%) and suggested a hands-on retune of `FLIGHT` or the arc height. The learner chose to skip it and go straight to the app map.
+Route and stops: Reference only, not toured: `src/screens/Workshop.tsx` `pick` → `src/components/WordAssembly.tsx` `fly()` → `src/hooks/useProgress.ts` `collectWord` / `src/lib/progress.ts` `collect`.
+Edit outcome: Declined; no code changed.
+Reflection: Offered at hand-off; answering is optional.
+Activity mode: Brief recap. A focused alternative was offered and declined. Map: `devpost/app-map.html`; every path and symbol checked against the source; opened in the browser.
 
 ## Revisions
 - Added the logo in slice 1: wordmark (header, intro's final frame) and wax-seal app icons (`public/*.png`, `manifest.webmanifest`, source `devpost/research/seal-icon.html`) — the learner asked for a logo at the first checkpoint and chose samples 1 + 2 from `devpost/research/logo-samples.html`; recorded in `prd.md > Look and Feel`.
