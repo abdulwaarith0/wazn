@@ -95,11 +95,11 @@ Commits (learner's standing rule, `spec.md > Decisions and Open Issues`): one fi
 
 - [x] Early usable behavior explored — after slice 1: the assembly animation's feel, timing and joining (including Safari/iPhone), while it can still shape everything built around it. Done on Android Chrome: animation "feels good"; learner asked for a logo (added). Safari/iPhone joining check not done yet (tested on Android); still open per `spec.md > Decisions and Open Issues`.
 - [x] Phase 1 core journey explored — after slice 4: the full must-ship journey (intro → unlock → collect → seal → Collection, both modes), the submittable checkpoint before Phases 2-3. Learner tried it and reported "works well"; no changes requested.
-- [ ] Final kick-the-tires exploration and feedback completed
+- [x] Final kick-the-tires exploration and feedback completed — 2026-10-12, with slices 1-7 (audio deferred, see Revisions). The learner explored the running app (dev server with `--host`) and reported "everything works well, no changes needed".
 
 ## Final Review
 
-- [ ] Final review complete — feedback resolved and learner confirms ready to ship
+- [x] Final review complete — feedback resolved and learner confirms ready to ship. No fixes were requested; tests (299), lint and build pass at `8cd3f5e`.
 
 ## Code Tour and App Map
 
