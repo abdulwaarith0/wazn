@@ -5,3 +5,5 @@
 node_modules/
 dist/
 *.tsbuildinfo
+/devpost/research/tts-trial/
+/devpost/research/ll-review/
