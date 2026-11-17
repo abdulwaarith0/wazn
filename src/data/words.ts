@@ -1,6 +1,6 @@
 import type { Word } from "./types";
 
-// Every real word, from devpost/word-list-draft.md (learner-reviewed).
+// Every real word in the app, hand-checked.
 // roles: one char per letter (a letter plus its vowel marks): r = root letter, p = pattern letter.
 // A missing (rootId, patternId) pair means no common word: the tile is greyed out.
 export const words: Word[] = [
@@ -98,7 +98,7 @@ export const words: Word[] = [
   { id: "khrj-form5", rootId: "khrj", patternId: "form5", ar: "تَخَرَّجَ", roles: "prrr", translit: "takharraja", meaning: "he graduated" },
   { id: "khrj-form10", rootId: "khrj", patternId: "form10", ar: "اِسْتَخْرَجَ", roles: "ppprrr", translit: "istakhraja", meaning: "he extracted" },
 
-  // Phase 3 (devpost/word-list-phase3-draft.md, learner-reviewed). Words whose letters change carry
+  // Phase 3: weak and doubled roots. Words whose letters change carry
   // `change`: the regular form the pattern gives, and the rule. In the real word, a letter that came
   // from the root (changed or merged) is "r"; a letter only the pattern added is "p".
   { id: "sne-form8", rootId: "sne", patternId: "form8", ar: "اِصْطَنَعَ", roles: "prprr", translit: "iṣṭanaʿa", meaning: "he fabricated, contrived", change: { regular: "اِصْتَنَعَ", regularRoles: "prprr", rule: "ت next to ص becomes ط" } },
