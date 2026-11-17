@@ -1,9 +1,7 @@
-/devpost/learner-profile.md
+/devpost/
 .env
 .env.*
 !.env.example
 node_modules/
 dist/
 *.tsbuildinfo
-/devpost/research/tts-trial/
-/devpost/research/ll-review/
