@@ -7,7 +7,7 @@ import { pieces, withJoiners, type Piece } from "../lib/arabic";
 import ChangeRule from "./ChangeRule";
 import ColouredWord from "./ColouredWord";
 
-// The kernel animation (proven in devpost/research/animation-spike.html):
+// The kernel animation (prototyped first as a standalone spike):
 // 1. the pattern waits with faint gold ف ع ل placeholders, drawn as separate pieces with
 //    invisible joiners so each piece keeps its joined shape;
 // 2. each root letter flies from its tile into its slot along an arc (FLIP: measure both
